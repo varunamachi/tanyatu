@@ -1,0 +1,39 @@
+<RCC>
+    <qresource prefix="/images">
+        <file alias="next">resources/next.png</file>
+        <file alias="pause">resources/pause.png</file>
+        <file alias="play">resources/play.png</file>
+        <file alias="prev">resources/prev.png</file>
+        <file alias="stop">resources/stop.png</file>
+        <file alias="background">resources/background.png</file>
+        <file alias="next_act">resources/next_act.png</file>
+        <file alias="pause_act">resources/pause_act.png</file>
+        <file alias="play_act">resources/play_act.png</file>
+        <file alias="prev_act">resources/prev_act.png</file>
+        <file alias="repeatall">resources/repeatall.png</file>
+        <file alias="repeatall_act">resources/repeatall_act.png</file>
+        <file alias="repeatone">resources/repeatone.png</file>
+        <file alias="repeatone_act">resources/repeatone_act.png</file>
+        <file alias="shuffle">resources/shuffle.png</file>
+        <file alias="shuffle_act">resources/shuffle_act.png</file>
+        <file alias="stop_act">resources/stop_act.png</file>
+        <file alias="muteon">resources/muteon.png</file>
+        <file alias="muteoff">resources/muteoff.png</file>
+        <file alias="greenchilli">resources/greenchilli.png</file>
+        <file alias="addfiles">resources/addfiles.png</file>
+        <file alias="addfiles_act">resources/addfiles_act.png</file>
+        <file alias="addfolder">resources/addfolder.png</file>
+        <file alias="addfolder_act">resources/addfolder_act.png</file>
+        <file alias="clear">resources/clear.png</file>
+        <file alias="clear_act">resources/clear_act.png</file>
+        <file alias="remove_act">resources/remove_act.png</file>
+        <file alias="remove">resources/remove.png</file>
+        <file alias="defaultcover">resources/defaultcover.png</file>
+        <file alias="chilliabt">resources/chilliabt.png</file>
+        <file alias="chilliabt_act">resources/chilliabt_act.png</file>
+        <file alias="hot">resources/hot.png</file>
+        <file alias="nothot">resources/nothot.png</file>
+        <file alias="star_filled">resources/star_filled.png</file>
+        <file alias="star_unfilled">resources/star_unfilled.png</file>
+    </qresource>
+</RCC>
