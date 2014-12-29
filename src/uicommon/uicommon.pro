@@ -2,9 +2,9 @@
 QT           += core widgets
 CONFIG       += qt shared
 DEFINES      += TANYATU_UI_COMMON
-LIBS         += -L../bin -ltntcore
 INCLUDEPATH += $$PWD/../../lib/taglib/include
 LIBS        += -L$$PWD/../../lib/taglib/lib -ltag
+LIBS         += -L../bin -ltntcore
 linux-g++ {
     LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL
             #-lphonon4qt5

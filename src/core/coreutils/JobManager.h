@@ -28,6 +28,7 @@
 #include <QReadWriteLock>
 
 #include "Convenience.h"
+#include "../TanyatuCoreGlobal.h"
 
 namespace Tanyatu {
 
@@ -49,7 +50,7 @@ TNT_INTERFACE IJob
 };
 
 
-class JobManager : public QThread
+class TANYATU_CORE_EXPORT JobManager : public QThread
 {
     Q_OBJECT
 

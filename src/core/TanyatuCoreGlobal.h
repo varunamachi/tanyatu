@@ -31,4 +31,3 @@
 #endif
 
 
-#endif // TANYATUCOREGLOBAL_H

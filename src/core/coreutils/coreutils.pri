@@ -3,8 +3,8 @@ HEADERS += \
 	coreutils/FileSystemUtil.h \
 	coreutils/Utils.h \
 	coreutils/ComponentIntegrator.h \
-    coreutils/JobManager.h \
-    coreutils/Settings.h
+        coreutils/JobManager.h \
+
 	
 SOURCES += \
 	coreutils/FileSystemUtil.cpp \

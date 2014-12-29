@@ -27,7 +27,7 @@
 
 namespace Tanyatu { namespace Ui {
 
-class TANYATU_GUI_EXPORT CommonTrackModel : public Tanyatu::Ui::AudioTrackModel
+class CommonTrackModel : public Tanyatu::Ui::AudioTrackModel
 {
 public:
     CommonTrackModel( int numCols, QObject *parent )

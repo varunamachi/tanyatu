@@ -46,4 +46,3 @@ private:
 
 } // namespace Tanyatu
 
-#endif // TANYATU_UTIL_FILESYSTEMUTIL_H
