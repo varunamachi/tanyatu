@@ -42,7 +42,7 @@ class PlayQueueTrackModel : public Tanyatu::Ui::MediaItemModel
 {
 public:
     explicit PlayQueueTrackModel( QObject *parent )
-        : Tanyatu::Ui::MediaItemModel( 2, parent )
+        : Tanyatu::Ui::MediaItemModel( 3, parent )
     {
 
     }

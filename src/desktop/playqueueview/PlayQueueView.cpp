@@ -84,9 +84,10 @@ void PlaylistWidget::setupUi() {
     m_model = new PlayQueueTrackModel( this );
     m_view->setModel( m_model );
     m_view->setFont( QFont( m_view->font().defaultFamily(), 9 ));
-    m_view->header()->setSectionResizeMode( 0, QHeaderView::Stretch );
-    m_view->setColumnWidth( 1, 16 );
+    m_view->header()->setSectionResizeMode( 1, QHeaderView::Stretch );
+    m_view->setColumnWidth( 2, 16 );
     m_view->header()->setStretchLastSection( false );
+    m_view->hideColumn( 0 );
 
     QVBoxLayout* mainLayout = new QVBoxLayout( this );
     mainLayout->addWidget( m_view );

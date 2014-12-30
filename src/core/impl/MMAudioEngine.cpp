@@ -23,6 +23,7 @@
 #include <QAudioDeviceInfo>
 #include <QtGlobal>
 #include <QList>
+#include <QThread>
 
 
 #include "MMAudioEngine.h"
@@ -51,7 +52,6 @@ MMAudioEngine::MMAudioEngine( QObject *parent )
              SIGNAL( volumeChanged( int )),
              this,
              SIGNAL( volumeChanged( int )));
-
 }
 
 
@@ -139,8 +139,11 @@ void MMAudioEngine::setSource( Tanyatu::Data::MediaItem *item )
 {
     if( item != nullptr ) {
         m_currentItem = item;
+        qDebug() << item->url();
         m_player->setMedia( item->url() );
-        emit sourceChanged( item );
+        QThread::currentThread()->sleep( 100 );
+        play();
+//        emit sourceChanged( item );
     }
 }
 
@@ -222,10 +225,12 @@ void MMAudioEngine::mediaStatusChanged( QMediaPlayer::MediaStatus status )
     case QMediaPlayer::LoadingMedia      :
     {
         newState = IEngine::State::Loading;
+        break;
     }
     case QMediaPlayer::BufferingMedia    :
     {
         newState = IEngine::State::Buffering;
+        break;
     }
 
     case QMediaPlayer::StalledMedia      :
@@ -234,22 +239,26 @@ void MMAudioEngine::mediaStatusChanged( QMediaPlayer::MediaStatus status )
         newState = m_player->state() == QMediaPlayer::PlayingState
                                                     ? IEngine::State::Playing
                                                     : IEngine::State::Paused;
+        break;
     }
     case QMediaPlayer::NoMedia           :
     case QMediaPlayer::LoadedMedia       :
     {
         newState = IEngine::State::Stopped;
+        break;
     }
 
     case QMediaPlayer::EndOfMedia        :
     {
         newState = IEngine::State::Stopped;
         emit finished( m_currentItem );
+        break;
     }
 
     case QMediaPlayer::UnknownMediaStatus:
     case QMediaPlayer::InvalidMedia      :
         newState = IEngine::State::Error;
+        break;
     }
     IEngine::State oldState = m_currentState;
     m_currentState = newState;
