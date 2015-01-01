@@ -87,7 +87,7 @@ public:
 
     void invokeCallback()
     {
-        m_callback();
+        if( m_callback ) m_callback();
     }
 
     static QEvent::Type type()
@@ -128,6 +128,9 @@ void JobManager::addJob( IJob *job )
 {
     SCOPE_LIMIT( m_lock.lockForWrite(), m_lock.unlock() );
     m_jobs.append( job );
+    if( ! this->isRunning() ) {
+        this->start();
+    }
 }
 
 
@@ -141,6 +144,9 @@ void JobManager::addJob( QString name,
                                job,
                                postResponseToEventQueue,
                                category ));
+    if( ! this->isRunning() ) {
+        this->start();
+    }
 }
 
 

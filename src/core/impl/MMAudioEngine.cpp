@@ -52,6 +52,14 @@ MMAudioEngine::MMAudioEngine( QObject *parent )
              SIGNAL( volumeChanged( int )),
              this,
              SIGNAL( volumeChanged( int )));
+    connect( m_player,
+             SIGNAL( stateChanged( QMediaPlayer::State )),
+             this,
+             SLOT( playerStateChangedTo(QMediaPlayer::State )));
+    connect( m_player,
+             SIGNAL( positionChanged( qint64 )),
+             this,
+             SLOT( positionChanged( qint64 )));
 }
 
 
@@ -87,32 +95,9 @@ bool MMAudioEngine::isCurrentSeekable() const
 
 QStringList MMAudioEngine::supportedFileExtentions()
 {
-    QStringList extensions;
-
-    QList< QAudioDeviceInfo > devices =
-            QAudioDeviceInfo::availableDevices( QAudio::AudioOutput );
-    foreach( QAudioDeviceInfo info, devices ) {
-        qDebug() << info.deviceName() << "-->" << info.supportedCodecs();
-    }
-
-
-
-    extensions << "*.mp3";
-    QAudioDeviceInfo info( QAudioDeviceInfo::defaultOutputDevice() );
-    qDebug() << info.deviceName() << "*";
-    QStringList formats = info.supportedCodecs();
-    for( QString &fmts : formats ) {
-        if( fmts == "mpeg ") {
-            extensions << "*.mp3";
-        }
-        else if( fmts == "mp4" ) {
-            extensions << "*.mp4" << "*.aac" << "*.m4a";
-        }
-        else if( fmts == "ogg" ) {
-            extensions << "*.ogg";
-        }
-    }
-    return extensions;
+    QStringList ext;
+    ext << "*.mp3" << "*.m4a";
+    return ext;
 }
 
 
@@ -141,9 +126,8 @@ void MMAudioEngine::setSource( Tanyatu::Data::MediaItem *item )
         m_currentItem = item;
         qDebug() << item->url();
         m_player->setMedia( item->url() );
-        QThread::currentThread()->sleep( 100 );
         play();
-//        emit sourceChanged( item );
+        emit sourceChanged( item );
     }
 }
 
@@ -156,9 +140,7 @@ void MMAudioEngine::pause()
 
 void MMAudioEngine::play()
 {
-    if( m_player->mediaStatus() == QMediaPlayer::BufferedMedia ) {
-        m_player->play();
-    }
+    m_player->play();
 }
 
 
@@ -198,22 +180,27 @@ void MMAudioEngine::clear()
 
 void MMAudioEngine::playerStateChangedTo( QMediaPlayer::State state )
 {
+    IEngine::State oldState = m_currentState;
     if( state == QMediaPlayer::PlayingState ) {
+        m_currentState = IEngine::State::Playing;
         emit playStarted( m_currentItem );
     }
     else if( state == QMediaPlayer::PausedState ) {
+        m_currentState = IEngine::State::Paused;
         emit paused( m_currentItem );
     }
     else if( state == QMediaPlayer::StoppedState ) {
+        m_currentState = IEngine::State::Stopped;
         emit stopped( m_currentItem );
     }
+    emit stateChanged( m_currentState, oldState );
 }
 
 
-void MMAudioEngine::positionChanged(quint64 pos)
+void MMAudioEngine::positionChanged( qint64 pos )
 {
     emit tick( pos );
-    if( m_player->duration() - pos < 1000 ) {
+    if(( m_player->duration() - pos ) < 1000 ) {
         emit aboutToFinish( m_currentItem );
     }
 }

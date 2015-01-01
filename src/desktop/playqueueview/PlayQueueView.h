@@ -32,6 +32,7 @@
 
 #include <core/interfaces/IPlayQueue.h>
 #include <core/data/MediaItem.h>
+#include <core/coreutils/Utils.h>
 #include <uicommon/uiutils/AudioLoader.h>
 #include <uicommon/itemmodels/MediaItemModel.h>
 
@@ -57,7 +58,8 @@ public:
             switch( column ) {
             case 0: return audio->trackId();
             case 1: return audio->title();
-            case 2: return audio->duration();
+            case 2: return Tanyatu::Utils::getStringTime(
+                            audio->duration() );
             }
         }
         return "";

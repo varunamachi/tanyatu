@@ -150,7 +150,7 @@ public slots:
 private slots:
     void playerStateChangedTo( QMediaPlayer::State state );
 
-    void positionChanged( quint64 pos );
+    void positionChanged( qint64 pos );
 
     void mediaStatusChanged( QMediaPlayer::MediaStatus status );
 

@@ -481,11 +481,11 @@ void AudioTrackView::onRatingChanged()
     m_view->repaint();
 }
 
-void AudioTrackView::onTrackInfoUpdated( Tanyatu::Data::StoredAudio *track )
+void AudioTrackView::onTrackInfoUpdated( Tanyatu::Data::StoredAudio */*track*/ )
 {
-    if( track ) {
-        AUDIO_LIB()->updateItem( track->trackId(), *track );
-    }
+//    if( track ) {
+//        AUDIO_LIB()->updateItem( track->trackId(), *track );
+//    }
 }
 
 

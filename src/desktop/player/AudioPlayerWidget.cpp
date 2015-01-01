@@ -72,7 +72,7 @@ void AudioPlayerWidget::init()
                                    Tanyatu::IEngine::State )),
              this,
              SLOT(engineStateChanged( Tanyatu::IEngine::State,
-                                      Tanyatu::IEngine::State)));
+                                      Tanyatu::IEngine::State )));
     connect( m_engine, SIGNAL( tick(qint64) ),
              m_playerWidget->seekSlider, SLOT( setCurrentValue( qint64 )));
     connect( m_playerWidget->seekSlider, SIGNAL( seeked( qint64 )),
