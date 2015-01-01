@@ -96,17 +96,31 @@ void initCoreComponents( QObject *parent )
 
 void initUiComponents( QMainWindow *win )
 {
-    ///[[ Working...]]
+    auto audio = new QList< Tanyatu::Data::StoredAudio *>();
+    AUDIO_LIB()->allItems( *audio );
     Tanyatu::Ui::CommonTrackModel *trackModel =
             new Tanyatu::Ui::CommonTrackModel( 5, win );
-    GreenChilli::ComponentManager::get()->addComponent(
-                new GreenChilli::Components::AudioTrackView( trackModel,
-                                                             4,
-                                                             win ));
+    trackModel->clear( true );
+    trackModel->setTrackList( audio );
+    auto trackView = new GreenChilli::Components::AudioTrackView( trackModel,
+                                                                  4,
+                                                                  win );
+    GreenChilli::ComponentManager::get()->addComponent( trackView );
     GreenChilli::ComponentManager::get()->addComponent(
                 new GreenChilli::Components::AudioLibView( win ));
     GreenChilli::ComponentManager::get()->addComponent(
                 new GreenChilli::Components::PlaylistView( win ));
+
+    QObject::connect( AUDIO_LIB(),
+                      &Tanyatu::IAudioLibrary::libraryChanged,
+                      [ = ]()
+    {
+        auto audio = new QList< Tanyatu::Data::StoredAudio *>();
+        AUDIO_LIB()->allItems( *audio );
+        trackModel->clear( true );
+        trackModel->setTrackList( audio );
+    });
+
 }
 
 

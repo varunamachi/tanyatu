@@ -272,7 +272,7 @@ void AudioTrackView::setupConnections()
                          QList<QUrl>*, QList<Tanyatu::Data::StoredAudio *> *)));
 
     connect( AUDIO_LIB(),
-             SIGNAL( ratingChanged( Tanyatu::Data::StoredAudio*)),
+             SIGNAL( ratingChanged( Tanyatu::Data::StoredAudio* )),
              this,
              SLOT( onRatingChanged() ));
 

@@ -281,8 +281,7 @@ void StdAudioLibrary::clearLibrary()
     if( m_valid ) {
         emit aboutToChangeLibrary();
         emit aboutToClear();
-        QList< Data::StoredAudio *> *allTracks = nullptr;
-        allTracks = new QList< Data::StoredAudio *>();
+        auto allTracks = new QList< Data::StoredAudio *>();
         std::copy( m_tracks.begin(), m_tracks.end(), allTracks->begin() );
         m_tracks.clear();
         emit cleared();

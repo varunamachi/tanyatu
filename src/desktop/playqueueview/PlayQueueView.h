@@ -52,7 +52,8 @@ public:
                            int column ) const
     {
         if( item != nullptr
-                && item->type() == Tanyatu::Data::Media_LocalAudio ) {
+                && ( item->type() == Tanyatu::Data::Media_LocalAudio
+                     || item->type() == Tanyatu::Data::Media_StoredAudio )) {
             Tanyatu::Data::AudioTrack *audio =
                     static_cast< Tanyatu::Data::AudioTrack *>( item );
             switch( column ) {

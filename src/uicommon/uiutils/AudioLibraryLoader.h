@@ -64,7 +64,8 @@ protected:
 
     virtual bool isSupportedFile( QFileInfo file )
     {
-        return m_supportedExt.contains( file.suffix() );
+        return m_supportedExt.contains(
+                    QString( "*." ).append( file.suffix() ) );
     }
 
     QList< Data::StoredAudio *> *m_mediaList;
