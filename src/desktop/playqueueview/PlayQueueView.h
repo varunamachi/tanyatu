@@ -30,6 +30,7 @@
 #include <QLabel>
 #include <QProgressBar>
 
+#include <core/T.h>
 #include <core/interfaces/IPlayQueue.h>
 #include <core/data/MediaItem.h>
 #include <core/coreutils/Utils.h>
@@ -46,6 +47,17 @@ public:
         : Tanyatu::Ui::MediaItemModel( 3, parent )
     {
 
+    }
+
+
+    QVariant data( const QModelIndex &index, int role ) const
+    {
+        if( role == Qt::BackgroundColorRole ) {
+            if( PLAYQUEUE()->currentIndex() == index.row() ) {
+                return QColor( Qt::red );
+            }
+        }
+        return Tanyatu::Ui::MediaItemModel::data( index, role );
     }
 
     QVariant dataForTrack( Tanyatu::Data::MediaItem *item,
@@ -75,6 +87,11 @@ public:
         case 2: return tr( "Len" );
         }
         return "";
+    }
+
+    void clearSelection( int row ) {
+        beginResetModel();
+        endResetModel();
     }
 };
 
@@ -157,6 +174,8 @@ private:
     QAction *m_loopAction;
 
     PlayQueueTrackModel *m_model;
+
+    int m_prevSelection;
 };
 
 

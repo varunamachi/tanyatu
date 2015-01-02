@@ -190,8 +190,7 @@ void SuperSlider::wheelEvent( QWheelEvent *event )
 {
     int delta = event->delta() / 60;
     qint64 newVal = m_curentVal + ( m_maxVal / m_width ) * delta;
-    if( newVal <= m_maxVal )
-    {
+    if( newVal <= m_maxVal ) {
         emit seeked( newVal );
         setCurrentValue( newVal );
     }
@@ -206,8 +205,7 @@ void SuperSlider::setMaxValue( qint64 maxValue )
 
 void SuperSlider::setCurrentValue( qint64 curValue )
 {
-    if( curValue <= m_maxVal && m_curentVal != curValue )
-    {
+    if( curValue <= m_maxVal && m_curentVal != curValue ) {
         m_curentVal = curValue < 0 ? 0
                                    : ( curValue > m_maxVal ? m_maxVal
                                                            : curValue );

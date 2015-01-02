@@ -286,6 +286,7 @@ void AudioPlayerWidget::updatePlayerActions()
     m_playerWidget->prevButton->setEnabled( PLAYQUEUE()->hasPrev() );
 }
 
+
 void AudioPlayerWidget::onTrackSelected( Tanyatu::Data::MediaItem * item )
 {
     if( item && ( item->type() == Tanyatu::Data::Media_LocalAudio

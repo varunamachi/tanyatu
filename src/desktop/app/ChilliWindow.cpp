@@ -28,6 +28,8 @@
 #include <QMargins>
 #include <QTime>
 #include <QThread>
+#include <QGraphicsDropShadowEffect>
+
 
 #include <core/T.h>
 #include <uicommon/uiutils/ChilliCache.h>
@@ -38,7 +40,7 @@
 #include "playqueueview/PlayQueueView.h"
 
 
-using namespace GreenChilli;
+namespace GreenChilli {
 
 static void delay()
 {
@@ -50,18 +52,16 @@ static void delay()
 
 
 
-ChilliWindow::ChilliWindow(QWidget *parent) :
-    QMainWindow(parent),
-    m_maximizeIcon( new QIcon( ":/images/addfolder_act" )),
-    m_restoreIcon( new QIcon( ":/images/addfiles_act" )),
-    m_maximised( false )
+ChilliMainWidget::ChilliMainWidget( QWidget *parent )
+    : QWidget(parent),
+      m_maximizeIcon( new QIcon( ":/images/addfolder_act" )),
+      m_restoreIcon( new QIcon( ":/images/addfiles_act" ))
 {
 
 
 //    DATA_RETRIEVER()->getSavedPlayQueue( );
 //    PLAYQUEUE()->addItems( list );
-    setWindowFlags( Qt::FramelessWindowHint | Qt::WindowMinimizeButtonHint );
-    QWidget *central  = new QWidget( this );
+
     this->setContentsMargins( 1, 1, 1, 1 );
 
     QVBoxLayout *playerLayout = new QVBoxLayout();
@@ -74,14 +74,6 @@ ChilliWindow::ChilliWindow(QWidget *parent) :
     QHBoxLayout *compLayout = new QHBoxLayout();
     compLayout->addWidget( ComponentManager::get() );
 
-    m_sizeGrip = new QSizeGrip( this );
-    m_sizeGrip->setFixedSize( 6, 6 );
-    m_sizeGrip->setStyleSheet( "background-color: red;");
-    m_sizeGrip->setToolTip( tr( "Drag to resize the window" ));
-//    compLayout->addWidget( sizeGrip,
-//                           0,
-//                           Qt::AlignBottom | Qt::AlignRight );
-    m_sizeGrip->setContentsMargins( QMargins() );
     compLayout->setContentsMargins( QMargins() );
     compLayout->setSpacing( 0 );
 
@@ -101,10 +93,10 @@ ChilliWindow::ChilliWindow(QWidget *parent) :
     mainLayout->setContentsMargins( QMargins() );
     mainLayout->setSpacing( 0 );
 
-    QPalette pal = central->palette();
-    central->setAutoFillBackground( true );
+    QPalette pal = this->palette();
+    this->setAutoFillBackground( true );
     pal.setBrush( QPalette::Window, QColor( Qt::black ));
-    central->setPalette( pal );
+    this->setPalette( pal );
     QString css = createStyleSheet();
 
     ComponentManager::get()->setStyleSheet( css );
@@ -120,18 +112,12 @@ ChilliWindow::ChilliWindow(QWidget *parent) :
              SIGNAL( aboutToQuit() ),
              this,
              SLOT( onAboutToQuit() ));
-    connect( ComponentManager::get(), SIGNAL( exitRequested() ),
-             QApplication::instance(), SLOT( quit() ));
-    connect( ComponentManager::get(), SIGNAL( minimizeReqested()) ,
-             this, SLOT( onMinimize() ));
-    central->setLayout( mainLayout );
-    this->setCentralWidget( central );
-    this->setAttribute(Qt::WA_TranslucentBackground, true);
+    this->setLayout( mainLayout );
 }
 
 
 
-void ChilliWindow::onAboutToQuit()
+void ChilliMainWidget::onAboutToQuit()
 {
     while( JOB_MANAGER()->hasPendingJobs() ) {
         delay();
@@ -144,87 +130,7 @@ void ChilliWindow::onAboutToQuit()
 }
 
 
-void ChilliWindow::mousePressEvent( QMouseEvent* event )
-{
-    if( event->button() == Qt::LeftButton ) {
-        m_moving = true;
-        m_lastMousePosition = event->globalPos();
-    }
-}
-
-void ChilliWindow::mouseMoveEvent( QMouseEvent* event )
-{
-    if( event->buttons().testFlag( Qt::LeftButton ) && m_moving ) {
-        QPoint newPos = this->pos() + (
-                    event->globalPos() - m_lastMousePosition );
-        if( newPos.y() <= 0 ) {
-            m_maximised = true;
-            maximize();
-        }
-        else if( m_maximised && newPos.y() >= 10 ) {
-            m_maximised = false;
-            restore();
-            move( event->globalX() - this->width() / 2, event->globalY() );
-        }
-        else {
-            move( newPos );
-        }
-        m_lastMousePosition = event->globalPos();
-    }
-}
-
-void ChilliWindow::mouseReleaseEvent( QMouseEvent* event )
-{
-    if( event->button() == Qt::LeftButton )
-    {
-        m_moving = false;
-    }
-}
-
-void ChilliWindow::showEvent( QShowEvent *evt )
-{
-    if( m_geometry.isEmpty() ) {
-        m_geometry = this->saveGeometry();
-    }
-    QMainWindow::showEvent( evt );
-}
-
-
-void ChilliWindow::resizeEvent( QResizeEvent *evt )
-{
-    Q_UNUSED( evt )
-    m_sizeGrip->setGeometry( this->width() - 8,
-                             this->height() - 8,
-                             6,
-                             6 );
-}
-
-
-void ChilliWindow::maximize()
-{
-    QDesktopWidget *desktop = QApplication::desktop();
-    // Because reserved space can be on all sides of the scren
-    // you have to both move and resize the window
-    this->setGeometry( desktop->availableGeometry() );
-}
-
-
-void ChilliWindow::restore()
-{
-    if( ! m_geometry.isEmpty() ) {
-        this->restoreGeometry( m_geometry );
-    }
-}
-
-
-void ChilliWindow::minimize()
-{
-    if( ! this->isMinimized() ) {
-        this->showMinimized();
-    }
-}
-
-QString ChilliWindow::createStyleSheet()
+QString ChilliMainWidget::createStyleSheet()
 {
     return "QWidget{"
             "background-color: black; "
@@ -267,27 +173,165 @@ QString ChilliWindow::createStyleSheet()
 }
 
 
+ChilliWindow::ChilliWindow( QWidget *parent )
+    : QMainWindow( parent )
+    , m_maximised( false )
+    , m_chilliWidget( new ChilliMainWidget( this ))
+{
+    m_chilliWidget->setObjectName( "chillimain" );
+
+    this->setWindowFlags( Qt::FramelessWindowHint
+                          | Qt::WindowMinimizeButtonHint );
+    m_sizeGrip = new QSizeGrip( this );
+    m_sizeGrip->setFixedSize( 6, 6 );
+    m_sizeGrip->setStyleSheet( "background-color: red;");
+    m_sizeGrip->setToolTip( tr( "Drag to resize the window" ));
+    m_sizeGrip->setContentsMargins( QMargins() );
+
+    QWidget *temp = new QWidget( this );
+    m_layout = new QHBoxLayout( temp );
+    m_layout->addWidget( m_chilliWidget );
+    temp->setAttribute( Qt::WA_TranslucentBackground, true );
+    this->setAttribute( Qt::WA_TranslucentBackground, true );
+    this->setCentralWidget( temp );
+
+    QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
+    effect->setBlurRadius( 20 );
+    effect->setColor( QColor( 0xA0, 0x52, 0x2D, 200 ));
+    effect->setOffset( -1.5 );
+    m_chilliWidget->setGraphicsEffect( effect );
+//    m_chilliWidget->setStyleSheet( "QWidget#chillimain {"
+//                                        "border: 1px solid red;"
+//                                        "border-radius: 20px;"
+//                                        "background-color: black;"
+//                                   "}" );
+
+    connect( ComponentManager::get(),
+             SIGNAL( exitRequested() ),
+             QApplication::instance(),
+             SLOT( quit() ));
+    connect( ComponentManager::get(),
+             SIGNAL( minimizeReqested()) ,
+             this,
+             SLOT( onMinimize() ));
+    connect( m_chilliWidget,
+             SIGNAL( maximize() ),
+             this,
+             SLOT( onMaximizeRestore() ) );
+    connect( m_chilliWidget,
+             SIGNAL( minimize() ),
+             this,
+             SLOT( onMinimize() ));
+    connect( m_chilliWidget,
+             SIGNAL( restore() ),
+             this,
+             SLOT( onMaximizeRestore() ));
+}
+
+
 void ChilliWindow::onMinimize()
 {
-    showMinimized();
+    minimize();
 }
 
 
 void ChilliWindow::onMaximizeRestore()
 {
     if( m_maximised ) {
-        m_maxRestore->setIcon( *m_maximizeIcon );
+//        m_maxRestore->setIcon( *m_maximizeIcon );
         m_maximised = false;
         restore();
     }
     else {
         m_geometry = saveGeometry();
         m_maximised = true;
-        m_maxRestore->setIcon( *m_restoreIcon );
+//        m_maxRestore->setIcon( *m_restoreIcon );
         maximize();
     }
 }
 
 
+void ChilliWindow::mousePressEvent( QMouseEvent* event )
+{
+    if( event->button() == Qt::LeftButton ) {
+        m_moving = true;
+        m_lastMousePosition = event->globalPos();
+    }
+}
+
+void ChilliWindow::mouseMoveEvent( QMouseEvent* event )
+{
+    if( event->buttons().testFlag( Qt::LeftButton ) && m_moving ) {
+        QPoint newPos = this->pos() + (
+                    event->globalPos() - m_lastMousePosition );
+        if( newPos.y() <= 0 ) {
+            m_maximised = true;
+            emit maximize();
+        }
+        else if( m_maximised && newPos.y() >= 10 ) {
+            m_maximised = false;
+            restore();
+            move( event->globalX() - this->width() / 2, event->globalY() );
+        }
+        else {
+            move( newPos );
+        }
+        m_lastMousePosition = event->globalPos();
+    }
+}
 
 
+void ChilliWindow::mouseReleaseEvent( QMouseEvent* event )
+{
+    if( event->button() == Qt::LeftButton )
+    {
+        m_moving = false;
+    }
+}
+
+
+void ChilliWindow::showEvent( QShowEvent *evt )
+{
+    if( m_geometry.isEmpty() ) {
+        m_geometry = this->saveGeometry();
+    }
+    QWidget::showEvent( evt );
+}
+
+
+void ChilliWindow::resizeEvent( QResizeEvent *evt )
+{
+    Q_UNUSED( evt )
+    m_sizeGrip->setGeometry( this->width() - 8,
+                             this->height() - 8,
+                             6,
+                             6 );
+}
+
+
+
+void ChilliWindow::maximize()
+{
+    QDesktopWidget *desktop = QApplication::desktop();
+    // Because reserved space can be on all sides of the scren
+    // you have to both move and resize the window
+    this->setGeometry( desktop->availableGeometry() );
+}
+
+
+void ChilliWindow::restore()
+{
+    if( ! m_geometry.isEmpty() ) {
+        this->restoreGeometry( m_geometry );
+    }
+}
+
+
+void ChilliWindow::minimize()
+{
+    if( ! this->isMinimized() ) {
+        this->showMinimized();
+    }
+}
+
+}

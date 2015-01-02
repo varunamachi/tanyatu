@@ -31,7 +31,8 @@ namespace GreenChilli { namespace Common {
 class ChilliUtils
 {
 public:
-    static void selectRow( QAbstractItemView *view, int row );
+    static void selectRow( QAbstractItemView *view,
+                           int row );
 
 private:
     ChilliUtils(){ }

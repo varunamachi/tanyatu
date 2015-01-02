@@ -24,8 +24,10 @@
 #include <QMainWindow>
 #include <QMouseEvent>
 #include <QPushButton>
+#include <QMargins>
 
 class QSizeGrip;
+class QHBoxLayout;
 
 namespace GreenChilli
 {
@@ -33,45 +35,28 @@ namespace GreenChilli
 class PlaylistWidget;
 class AudioPlayerWidget;
 
-class ChilliWindow : public QMainWindow
+
+class ChilliMainWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ChilliWindow(QWidget *parent = 0);
+    explicit ChilliMainWidget( QWidget *parent = 0 );
 
 public slots:
     void onAboutToQuit();
 
-protected:
-    void mouseMoveEvent(QMouseEvent* event);
-
-    void mousePressEvent(QMouseEvent* event);
-
-    void mouseReleaseEvent(QMouseEvent* event);
-
-    void showEvent( QShowEvent *evt );
-
-    void resizeEvent( QResizeEvent *evt );
-
-private slots:
-    void onMaximizeRestore();
-
-    void onMinimize();
-
-private:
+signals:
     void maximize();
-
-    void restore();
 
     void minimize();
 
+    void restore();
+
+
+private:
     QString createStyleSheet();
 
     QPushButton *m_maxRestore;
-
-    QByteArray m_geometry;
-
-    QPoint m_lastMousePosition;
 
     QIcon *m_maximizeIcon;
 
@@ -83,10 +68,53 @@ private:
 
     AudioPlayerWidget *m_audioPlayer;
 
+};
+
+
+class ChilliWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    explicit ChilliWindow( QWidget *parent = 0 );
+
+private slots:
+    void onMaximizeRestore();
+
+    void onMinimize();
+
+protected:
+    void mouseMoveEvent( QMouseEvent* event );
+
+    void mousePressEvent( QMouseEvent* event );
+
+    void mouseReleaseEvent( QMouseEvent* event );
+
+    void showEvent( QShowEvent *evt );
+
+    void resizeEvent( QResizeEvent *evt );
+
+private:
+    void maximize();
+
+    void restore();
+
+    void minimize();
+
+    ChilliMainWidget *m_chilliWidget;
+
     QSizeGrip *m_sizeGrip;
 
     bool m_moving;
 
     bool m_maximised;
+
+    QPoint m_lastMousePosition;
+
+    QByteArray m_geometry;
+
+    QHBoxLayout *m_layout;
 };
+
+
 }

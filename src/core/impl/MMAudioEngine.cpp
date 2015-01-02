@@ -27,6 +27,7 @@
 
 
 #include "MMAudioEngine.h"
+#include "../data/AudioTrack.h"
 
 namespace Tanyatu { namespace Impl {
 
@@ -60,6 +61,7 @@ MMAudioEngine::MMAudioEngine( QObject *parent )
              SIGNAL( positionChanged( qint64 )),
              this,
              SLOT( positionChanged( qint64 )));
+    m_player->setNotifyInterval( 1000 );
 }
 
 
@@ -77,13 +79,21 @@ QString MMAudioEngine::engineDesc() const
 
 qint64 MMAudioEngine::currentItemTotalTime() const
 {
+//    if( m_currentItem != nullptr
+//          && ( m_currentItem->type() == Data::MediaType::Media_LocalAudio
+//              || m_currentItem->type() == Data::MediaType::Media_StoredAudio )){
+//        return m_player->duration() != 0
+//                ? m_player->duration()
+//                : static_cast< Data::AudioTrack *>( m_currentItem )->duration();
+
+//    }
     return m_player->duration();
 }
 
 
 qint64 MMAudioEngine::currentItemRemainingTime() const
 {
-    return qMax( m_player->duration() - m_player->position(), qint64( 0 ));
+    return qMax( currentItemTotalTime() - m_player->position(), qint64( 0 ));
 }
 
 
@@ -124,9 +134,7 @@ void MMAudioEngine::setSource( Tanyatu::Data::MediaItem *item )
 {
     if( item != nullptr ) {
         m_currentItem = item;
-        qDebug() << item->url();
         m_player->setMedia( item->url() );
-        play();
         emit sourceChanged( item );
     }
 }
@@ -223,18 +231,26 @@ void MMAudioEngine::mediaStatusChanged( QMediaPlayer::MediaStatus status )
     case QMediaPlayer::StalledMedia      :
     case QMediaPlayer::BufferedMedia     :
     {
-        newState = m_player->state() == QMediaPlayer::PlayingState
+        auto qstate = m_player->state();
+        newState = /*m_player->state()*/ qstate == QMediaPlayer::PlayingState
                                                     ? IEngine::State::Playing
                                                     : IEngine::State::Paused;
+
         break;
     }
     case QMediaPlayer::NoMedia           :
-    case QMediaPlayer::LoadedMedia       :
     {
         newState = IEngine::State::Stopped;
         break;
     }
-
+    case QMediaPlayer::LoadedMedia       :
+    {
+        if( m_currentState != IEngine::State::Stopped ) {
+            play();
+        }
+        break;
+//        newState = IEngine::State::Playing;
+    }
     case QMediaPlayer::EndOfMedia        :
     {
         newState = IEngine::State::Stopped;

@@ -42,7 +42,7 @@ TextScroller::TextScroller( QWidget *parent )
     m_fullPixmap = new QPixmap(  );
     m_currentPixmap = new QPixmap(m_displayLength, m_displayHeight);
     m_timer = new QTimer( this );
-    m_timer->setInterval( 40 );
+    m_timer->setInterval( 400 );
     m_textColor = QColor( 255, 168, 88 );
     connect( m_timer, SIGNAL( timeout() ),
              this, SLOT( onTimeOut() ));

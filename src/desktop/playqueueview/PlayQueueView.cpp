@@ -39,7 +39,7 @@
 #include <QMimeData>
 
 #include <core/data/MediaItem.h>
-#include <core/T.h>
+
 
 #include "PlayQueueView.h"
 #include "../player/AudioPlayerWidget.h"
@@ -118,9 +118,12 @@ void PlaylistWidget::setupConnections()
              this,
              SLOT( onPlaylistChanged() ));
     connect( m_view,
-             SIGNAL( clicked( QModelIndex )),
-             this,
-             SLOT( onPlaylistChanged() ));
+             &QTreeView::clicked,
+             [ = ]()
+    {
+        m_removeAction->setEnabled(
+                    m_view->selectionModel()->hasSelection() );
+    });
     connect( m_loader,
              SIGNAL( loadProgress( int, int, QString )),
              this,
@@ -134,7 +137,7 @@ void PlaylistWidget::setupConnections()
     connect( m_loader,
              SIGNAL( loadingStarted( int )),
              this,
-             SLOT( onLoadingStarted(int) ));
+             SLOT( onLoadingStarted( int ) ));
     connect( m_loader,
              SIGNAL( loadedItem( Tanyatu::Data::AudioTrack* )),
              this,
@@ -143,6 +146,14 @@ void PlaylistWidget::setupConnections()
              SIGNAL( activated( QModelIndex )),
              this,
              SLOT( rowSelected( QModelIndex )));
+
+//#ifdef Q_OS_WIN32
+//    //On Linux "activated" signal handles the double click
+//    connect( m_view,
+//             SIGNAL( doubleClicked( QModelIndex )),
+//             this,
+//             SLOT( rowSelected( QModelIndex )));
+//#endif
     connect( AUDIO_ENGINE(),
              SIGNAL( finished( Tanyatu::Data::MediaItem* )),
              m_playlist,
@@ -150,12 +161,15 @@ void PlaylistWidget::setupConnections()
 }
 
 
-void PlaylistWidget::indexChanged( Tanyatu::Data::MediaItem *track, int index)
+void PlaylistWidget::indexChanged( Tanyatu::Data::MediaItem *track, int index )
 {
     Q_UNUSED( track );
     Tanyatu::T::get()->audioEngine()->setSource( track );
     m_view->clearSelection();
     Common::ChilliUtils::selectRow( m_view, index );
+    m_model->clearSelection( index );
+    m_prevSelection = index;
+
 }
 
 
