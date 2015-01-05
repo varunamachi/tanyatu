@@ -19,6 +19,7 @@ include( preferenceview/preferenceview.pri )
 include( trackview/trackview.pri )
 include( viewcommon/viewcommon.pri )
 include( widgets/widgets.pri )
+include( thirdparty/thirdparty.pri )
 
 linux-g++ {
     LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL

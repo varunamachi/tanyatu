@@ -26,6 +26,7 @@
 #include <QPushButton>
 #include <QMargins>
 
+
 class QSizeGrip;
 class QHBoxLayout;
 
@@ -51,6 +52,9 @@ signals:
     void minimize();
 
     void restore();
+
+protected:
+    void paintEvent( QPaintEvent *event );
 
 
 private:

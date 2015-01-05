@@ -29,6 +29,7 @@
 #include <QTime>
 #include <QThread>
 #include <QGraphicsDropShadowEffect>
+#include <QPaintEvent>
 
 
 #include <core/T.h>
@@ -38,6 +39,7 @@
 #include "ComponentManager.h"
 #include "player/AudioPlayerWidget.h"
 #include "playqueueview/PlayQueueView.h"
+#include "thirdparty/CustomShadowEffect.h"
 
 
 namespace GreenChilli {
@@ -63,7 +65,6 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
 //    PLAYQUEUE()->addItems( list );
 
 //    this->setContentsMargins( 1, 1, 1, 1 );
-    qApp->setStyleSheet( createStyleSheet() );
 
     QVBoxLayout *playerLayout = new QVBoxLayout();
     m_audioPlayer = new AudioPlayerWidget( this );
@@ -97,15 +98,14 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
 //    QPalette pal = this->palette();
 //    this->setAutoFillBackground( true );
 //    pal.setBrush( QPalette::Window, QColor( Qt::black ));
+//    QBrush brush();
 //    this->setPalette( pal );
-//    QString css = createStyleSheet();
-
-//    ComponentManager::get()->setStyleSheet( css );
-//    m_playlist->setStyleSheet( css );
+    QString css = createStyleSheet();
+//    this->setStyleSheet( css );
+    ComponentManager::get()->setStyleSheet( css );
+    m_playlist->setStyleSheet( css );
     playerLayout->setContentsMargins( QMargins() );
     playerLayout->setSpacing( 0 );
-//    m_audioPlayer->setStyleSheet( );
-//    this->setStyleSheet( css );
 
     connect( m_audioPlayer, SIGNAL( urlsDropped( QList< QUrl > )),
              m_playlist, SLOT( addUrls( QList< QUrl > )));
@@ -135,6 +135,19 @@ void ChilliMainWidget::onAboutToQuit()
 }
 
 
+void ChilliMainWidget::paintEvent( QPaintEvent *event )
+{
+    QPainter painter( this );
+//    painter.drawRoundedRect( 0, 0, this->width(), this->height(), 5, 5 );
+    QPainterPath path;
+    path.addRoundedRect( 0, 0, this->width(), this->height(), 10, 10 );
+    QBrush brush( Qt::black );
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::HighQualityAntialiasing);
+    painter.fillPath( path, brush );
+}
+
+
 QString ChilliMainWidget::createStyleSheet()
 {
     return "QWidget{"
@@ -142,12 +155,12 @@ QString ChilliMainWidget::createStyleSheet()
             "color: #FFA858;"
             "border-color: black;"
         "}"
-         "QWidget#chillimain{"
-            "background-color: red; "
-            "color: #FFA858;"
-            "border: 5px solid red;"
-            "border-radius: 8px;"
-        "}"
+//         "QWidget#chillimain{"
+//            "background-color: red; "
+//            "color: #FFA858;"
+//            "border: 5px solid red;"
+//            "border-radius: 8px;"
+//        "}"
         "QPushButton{"
             "background-color: #202020; "
             "color: #FFA858;"
@@ -167,9 +180,9 @@ QString ChilliMainWidget::createStyleSheet()
             "background-color: #202020;"
             "color: white;"
         "}"
-        "QTreeView::item:hover, QListView::item:hover { "
-            "background-color: rgba( 255, 168, 48, 130 );"
-        "}"
+//        "QTreeView::item:hover, QListView::item:hover { "
+//            "background-color: rgba( 255, 168, 48, 130 );"
+//        "}"
         "QProgressBar{ "
             "border-radius: 5px;"
             "color: white;"
@@ -199,16 +212,21 @@ ChilliWindow::ChilliWindow( QWidget *parent )
     m_sizeGrip->setContentsMargins( QMargins() );
 
     QWidget *temp = new QWidget( this );
+    temp->setContentsMargins( 5, 5, 5, 5 );
+    m_chilliWidget->setContentsMargins( 5, 5, 5, 5 );
     m_layout = new QHBoxLayout( temp );
     m_layout->addWidget( m_chilliWidget );
     temp->setAttribute( Qt::WA_TranslucentBackground, true );
     this->setAttribute( Qt::WA_TranslucentBackground, true );
     this->setCentralWidget( temp );
 
-    QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
-    effect->setBlurRadius( 20 );
-    effect->setColor( QColor( 0xA0, 0x52, 0x2D, 200 ));
-    effect->setOffset( -1.5 );
+    CustomShadowEffect *effect = new CustomShadowEffect( this );
+    effect->setBlurRadius( 20.0 );
+    effect->setDistance( 6.0 );
+//    effect->setColor(QColor(0, 0, 0, 80));
+    effect->setColor( QColor( 0xA0, 0x52, 0x2D, 150 ));
+//    effect->setColor( Qt::black );
+//    effect->setOffset( -1.5 );
     m_chilliWidget->setGraphicsEffect( effect );
     connect( ComponentManager::get(),
              SIGNAL( exitRequested() ),
