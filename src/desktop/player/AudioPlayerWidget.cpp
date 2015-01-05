@@ -60,12 +60,13 @@ void AudioPlayerWidget::init()
     m_playerWidget->volumeSlider->setWidth( 80 );
     m_playerWidget->volumeSlider->setMaxValue( 100 );
     m_playerWidget->volumeSlider->setHeight( 3 );
-    this->setAcceptDrops( true );
     this->setAutoFillBackground( true );
-    setScrollingText();
     QPalette pal = this->palette();
     pal.setBrush( QPalette::Window, QBrush( QImage( ":/images/background" )));
     this->setPalette( pal );
+    this->setAcceptDrops( true );
+
+    setScrollingText();
 
     connect( m_engine,
              SIGNAL( stateChanged( Tanyatu::IEngine::State,
@@ -321,10 +322,10 @@ void AudioPlayerWidget::onTrackSelected( Tanyatu::Data::MediaItem * item )
         painter.drawPixmap( 0, 0, pixmap.scaled( background.size() ));
         painter.setOpacity( 0.70 );
         painter.drawPixmap( 0, 0, background );
-        QPalette pal = this->palette();
-        pal.setBrush( QPalette::Window,
-                      QBrush( result ));
-        this->setPalette( pal );
+//        QPalette pal = this->palette();
+//        pal.setBrush( QPalette::Window,
+//                      QBrush( result ));
+//        this->setPalette( pal );
 
     }
 }

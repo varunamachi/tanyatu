@@ -36,4 +36,7 @@
         <file alias="star_filled">resources/star_filled.png</file>
         <file alias="star_unfilled">resources/star_unfilled.png</file>
     </qresource>
+    <qresource prefix="/">
+        <file>QMLPlayer.qml</file>
+    </qresource>
 </RCC>

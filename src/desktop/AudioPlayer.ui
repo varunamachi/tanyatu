@@ -14,7 +14,51 @@
    <string>GreenChilli</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QWidget{
+            background-color: black; 
+            color: #FFA858;
+            border-color: black;
+        }
+         QWidget#chillimain {
+            background-color: black; 
+            color: #FFA858;
+            border-color: black;
+            border: 1px solid red;
+            border-radius: 20px;
+        }
+        QPushButton{
+            background-color: #202020; 
+            color: #FFA858;
+            border-width: 8px;
+            border-color: black;
+        }
+        QTreeView{ 
+            background-color: #151515;
+            alternate-background-color: #202020;
+        }
+        QTreeView::item:selected:active, QTreeView::item:selected:!active,
+        QListView::item:selected:active, QListView::item:selected:!active{
+            color: #151515; 
+            background-color: rgba( 255, 168, 48, 200 );
+        }
+        QHeaderView::section {
+            background-color: #202020;
+            color: white;
+        }
+        QTreeView::item:hover, QListView::item:hover { 
+            background-color: rgba( 255, 168, 48, 130 );
+        }
+        QProgressBar{ 
+            border-radius: 5px;
+            color: white;
+            text-align: center;
+        }
+        QProgressBar::chunk {
+            background-color: #FFA858;
+        }
+        QLineEdit{ background-color: #444444;}
+        QMenu{ background-color: #444444;}
+        QMenu::item:selected{background-color: #696969; }</string>
   </property>
   <widget class="GreenChilli::Widgets::SuperSlider" name="seekSlider" native="true">
    <property name="geometry">
@@ -100,18 +144,7 @@ color: rgb(255, 170, 0);</string>
     <string>mute</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">/* QPushButton:enabled{
-	background-color: rgba(255, 255, 255, 0);
-	background-image: url(:/images/muteoff); 
-	background-repeat: none;
-}
-
-QPushButton:checked {
-	background-color: rgba(255, 255, 255, 0);
-	background-image: url(:/images/muteon);
-	background-repeat: none;
-} */
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>
@@ -155,18 +188,7 @@ QPushButton:checked {
     <string>Set repeat mode</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">/* QPushButton  {
-	
-	background-color: rgba(255, 255, 255, 0);	
-	background-image: url(:/images/repeatall);
-	background-repeat: none;
-}
-QPushButton:pressed {
-	background-color: rgba(255, 255, 255, 0); 
-	background-image: url(:/images/repeatall_act);
-	background-repeat: none;
-} */
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>
@@ -194,21 +216,10 @@ QPushButton:pressed {
     <string>Next track</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">/*QPushButton  {
-	
-	background-color: rgba(255, 255, 255, 0);
-	background-image: url(:/images/next);
-	background-repeat: none;
-}
-QPushButton:pressed {
-	background-color: rgba(255, 255, 255, 0);
-	background-image: url(:/images/next_act);
-	background-repeat: none;
-}*/
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
-    <string>Hi</string>
+    <string/>
    </property>
   </widget>
   <widget class="GreenChilli::Widgets::ImagePushButton" name="shuffleButton">
@@ -230,17 +241,7 @@ QPushButton:pressed {
     <string>Set shuffle mode</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">/*QPushButton  {
-	background-color: rgba(255, 255, 255, 0);
-	background-image: url(:/images/shuffle);
-	background-repeat: none;
-}
-QPushButton:pressed, QPushButton:checked {
-	background-color: rgba(255, 255, 255, 0); 
-	background-image: url(:/images/shuffle_act);
-	background-repeat: none;
-}*/
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>
@@ -268,16 +269,7 @@ QPushButton:pressed, QPushButton:checked {
     <string>Stop</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">/*QPushButton  {
-	background-image: url(:/images/stop);	
-	background-color: rgba(255, 255, 255, 0);
-	background-repeat: none;
-}
-QPushButton:pressed {
-	background-color: rgba(255, 255, 255, 0);
-	background-image: url(:/images/stop_act);
-	background-repeat: none;
-}*/
+    <string notr="true">
 </string>
    </property>
    <property name="text">
@@ -309,18 +301,7 @@ QPushButton:pressed {
     <string>Play</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">/*QPushButton  {
-	
-	background-color: rgba(255, 255, 255, 0);
-	background-image: url(:/images/play);
-	background-repeat: none;
-}
-QPushButton:pressed {
-	background-color: rgba(255, 255, 255, 0); 
-	background-image: url(:/images/play_act);
-	background-repeat: none;
-}*/
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>
@@ -345,19 +326,7 @@ QPushButton:pressed {
     <string>Previous track</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">/*QPushButton  {
-	
-	background-color: rgba(255, 255, 255, 0);
-	background-image: url(:/images/prev);
-	background-repeat: none;
-
-}
-QPushButton:pressed {
-	background-color: rgba(255, 255, 255, 0);
-	background-image: url(:/images/prev_act);
-	background-repeat: none;
-}*/
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>
@@ -416,18 +385,7 @@ color: rgb(255, 170, 0)</string>
     <string>About GreenChilli</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">/* QPushButton  {
-	
-	background-color: rgba(255, 255, 255, 0);	
-	background-image: url(:/images/repeatall);
-	background-repeat: none;
-}
-QPushButton:pressed {
-	background-color: rgba(255, 255, 255, 0); 
-	background-image: url(:/images/repeatall_act);
-	background-repeat: none;
-} */
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>

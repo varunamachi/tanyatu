@@ -58,11 +58,12 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
       m_restoreIcon( new QIcon( ":/images/addfiles_act" ))
 {
 
-
+    this->setObjectName( "chillimain" );
 //    DATA_RETRIEVER()->getSavedPlayQueue( );
 //    PLAYQUEUE()->addItems( list );
 
-    this->setContentsMargins( 1, 1, 1, 1 );
+//    this->setContentsMargins( 1, 1, 1, 1 );
+    qApp->setStyleSheet( createStyleSheet() );
 
     QVBoxLayout *playerLayout = new QVBoxLayout();
     m_audioPlayer = new AudioPlayerWidget( this );
@@ -93,16 +94,18 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
     mainLayout->setContentsMargins( QMargins() );
     mainLayout->setSpacing( 0 );
 
-    QPalette pal = this->palette();
-    this->setAutoFillBackground( true );
-    pal.setBrush( QPalette::Window, QColor( Qt::black ));
-    this->setPalette( pal );
-    QString css = createStyleSheet();
+//    QPalette pal = this->palette();
+//    this->setAutoFillBackground( true );
+//    pal.setBrush( QPalette::Window, QColor( Qt::black ));
+//    this->setPalette( pal );
+//    QString css = createStyleSheet();
 
-    ComponentManager::get()->setStyleSheet( css );
-    m_playlist->setStyleSheet( css );
+//    ComponentManager::get()->setStyleSheet( css );
+//    m_playlist->setStyleSheet( css );
     playerLayout->setContentsMargins( QMargins() );
     playerLayout->setSpacing( 0 );
+//    m_audioPlayer->setStyleSheet( );
+//    this->setStyleSheet( css );
 
     connect( m_audioPlayer, SIGNAL( urlsDropped( QList< QUrl > )),
              m_playlist, SLOT( addUrls( QList< QUrl > )));
@@ -113,6 +116,8 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
              this,
              SLOT( onAboutToQuit() ));
     this->setLayout( mainLayout );
+
+
 }
 
 
@@ -136,6 +141,12 @@ QString ChilliMainWidget::createStyleSheet()
             "background-color: black; "
             "color: #FFA858;"
             "border-color: black;"
+        "}"
+         "QWidget#chillimain{"
+            "background-color: red; "
+            "color: #FFA858;"
+            "border: 5px solid red;"
+            "border-radius: 8px;"
         "}"
         "QPushButton{"
             "background-color: #202020; "
@@ -178,13 +189,12 @@ ChilliWindow::ChilliWindow( QWidget *parent )
     , m_maximised( false )
     , m_chilliWidget( new ChilliMainWidget( this ))
 {
-    m_chilliWidget->setObjectName( "chillimain" );
-
     this->setWindowFlags( Qt::FramelessWindowHint
                           | Qt::WindowMinimizeButtonHint );
     m_sizeGrip = new QSizeGrip( this );
     m_sizeGrip->setFixedSize( 6, 6 );
-    m_sizeGrip->setStyleSheet( "background-color: red;");
+    m_sizeGrip->setGeometry( m_chilliWidget->width() - 6, m_chilliWidget->height() - 6, 6, 6 );
+    m_sizeGrip->setStyleSheet( "background-color: yellow;");
     m_sizeGrip->setToolTip( tr( "Drag to resize the window" ));
     m_sizeGrip->setContentsMargins( QMargins() );
 
@@ -200,12 +210,6 @@ ChilliWindow::ChilliWindow( QWidget *parent )
     effect->setColor( QColor( 0xA0, 0x52, 0x2D, 200 ));
     effect->setOffset( -1.5 );
     m_chilliWidget->setGraphicsEffect( effect );
-//    m_chilliWidget->setStyleSheet( "QWidget#chillimain {"
-//                                        "border: 1px solid red;"
-//                                        "border-radius: 20px;"
-//                                        "background-color: black;"
-//                                   "}" );
-
     connect( ComponentManager::get(),
              SIGNAL( exitRequested() ),
              QApplication::instance(),

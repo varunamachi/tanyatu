@@ -80,10 +80,10 @@ private slots:
         m_playerWidget->seekSlider->setEnabled( false );
         m_playerWidget->bitrate->setText( "" );
         m_playerWidget->sampleFreq->setText( "" );
-        QPalette pal = this->palette();
-        pal.setBrush( QPalette::Window, QBrush(
-                          QImage( ":/images/background" )));
-        this->setPalette( pal );
+//        QPalette pal = this->palette();
+//        pal.setBrush( QPalette::Window, QBrush(
+//                          QImage( ":/images/background" )));
+//        this->setPalette( pal );
     }
 
     void setScrollingText( QString text = "G R E E N C H I L L I" )

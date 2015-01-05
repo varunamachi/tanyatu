@@ -61,6 +61,10 @@ MMAudioEngine::MMAudioEngine( QObject *parent )
              SIGNAL( positionChanged( qint64 )),
              this,
              SLOT( positionChanged( qint64 )));
+    connect( m_player,
+             SIGNAL( error( QMediaPlayer::Error )),
+             this,
+             SLOT( errorOccured( QMediaPlayer::Error )));
     m_player->setNotifyInterval( 1000 );
 }
 
@@ -79,14 +83,6 @@ QString MMAudioEngine::engineDesc() const
 
 qint64 MMAudioEngine::currentItemTotalTime() const
 {
-//    if( m_currentItem != nullptr
-//          && ( m_currentItem->type() == Data::MediaType::Media_LocalAudio
-//              || m_currentItem->type() == Data::MediaType::Media_StoredAudio )){
-//        return m_player->duration() != 0
-//                ? m_player->duration()
-//                : static_cast< Data::AudioTrack *>( m_currentItem )->duration();
-
-//    }
     return m_player->duration();
 }
 
@@ -213,86 +209,87 @@ void MMAudioEngine::positionChanged( qint64 pos )
     }
 }
 
+
 void MMAudioEngine::mediaStatusChanged( QMediaPlayer::MediaStatus status )
 {
-    IEngine::State newState = IEngine::State::Error;
+    IEngine::State newState = IEngine::State::Unknown;
     switch( status ) {
-    case QMediaPlayer::LoadingMedia      :
-    {
+    case QMediaPlayer::LoadingMedia : {
         newState = IEngine::State::Loading;
         break;
     }
-    case QMediaPlayer::BufferingMedia    :
-    {
+    case QMediaPlayer::BufferingMedia : {
         newState = IEngine::State::Buffering;
         break;
     }
-
-    case QMediaPlayer::StalledMedia      :
-    case QMediaPlayer::BufferedMedia     :
-    {
-        auto qstate = m_player->state();
-        newState = /*m_player->state()*/ qstate == QMediaPlayer::PlayingState
-                                                    ? IEngine::State::Playing
-                                                    : IEngine::State::Paused;
-
+    case QMediaPlayer::StalledMedia :
+    case QMediaPlayer::BufferedMedia : {
+        newState = m_player->state() == QMediaPlayer::PlayingState
+                ? IEngine::State::Playing
+                : IEngine::State::Paused;
         break;
     }
-    case QMediaPlayer::NoMedia           :
-    {
+    case QMediaPlayer::NoMedia : {
         newState = IEngine::State::Stopped;
         break;
     }
-    case QMediaPlayer::LoadedMedia       :
-    {
+    case QMediaPlayer::LoadedMedia : {
         if( m_currentState != IEngine::State::Stopped ) {
             play();
+            newState = IEngine::State::Playing;
         }
         break;
-//        newState = IEngine::State::Playing;
     }
-    case QMediaPlayer::EndOfMedia        :
-    {
+    case QMediaPlayer::EndOfMedia : {
         newState = IEngine::State::Stopped;
         emit finished( m_currentItem );
         break;
     }
-
-    case QMediaPlayer::UnknownMediaStatus:
-    case QMediaPlayer::InvalidMedia      :
+    case QMediaPlayer::InvalidMedia : {
         newState = IEngine::State::Error;
         break;
+    }
+    case QMediaPlayer::UnknownMediaStatus : {
+        if( m_currentState != IEngine::State::Playing ) {
+            newState = IEngine::State::Playing;
+        }
+        break;
+    }
     }
     IEngine::State oldState = m_currentState;
     m_currentState = newState;
     emit stateChanged( newState, oldState );
 }
 
+
 void MMAudioEngine::errorOccured( QMediaPlayer::Error merror )
 {
-
+    QString errorMessage = "";
     switch( merror ) {
     case QMediaPlayer::ResourceError:
-        emit error( "Could not load the media" );
+        errorMessage = "Could not load the media";
         break;
     case QMediaPlayer::FormatError:
-        emit error( "Invalid media format" );
+        errorMessage = "Invalid media format";
         break;
     case QMediaPlayer::NetworkError:
-        emit error( "Could not connect to network" );
+        errorMessage = "Could not connect to network";
         break;
     case QMediaPlayer::AccessDeniedError:
-        emit error( "Denied permission to access the media" );
+        errorMessage = "Denied permission to access the media";
         break;
     case QMediaPlayer::ServiceMissingError:
-        emit error( "Missing service error" );
+        errorMessage = "Missing service error";
         break;
     case QMediaPlayer::MediaIsPlaylist:
-        emit error( "Invalid media provided" );
+        errorMessage = "Invalid media provided";
         break;
     default:
+        errorMessage = "An error occured";
         break;
     }
+    qDebug() << errorMessage;
+    emit error( errorMessage );
 }
 
 } }

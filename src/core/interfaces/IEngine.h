@@ -57,7 +57,8 @@ public:
         Buffering,
         Paused,
         Stopped,
-        Error
+        Error,
+        Unknown
     };
 
     /**

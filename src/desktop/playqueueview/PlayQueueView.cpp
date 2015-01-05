@@ -69,8 +69,8 @@ PlaylistWidget::PlaylistWidget( QWidget *parent )
 void PlaylistWidget::setupUi() {
 
 
-    this->setAutoFillBackground( true );
-    m_toolBar->setAutoFillBackground( true );
+//    this->setAutoFillBackground( true );
+//    m_toolBar->setAutoFillBackground( true );
     m_view->setWordWrap( false );
     m_view->setAlternatingRowColors( true );
     m_view->setAutoScroll( true );

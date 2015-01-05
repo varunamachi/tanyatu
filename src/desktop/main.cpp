@@ -130,6 +130,7 @@ int main(int argc, char *argv[])
     QCoreApplication::instance()->setApplicationName( "GreenChilli" );
     a.setApplicationName( QObject::tr( "GreenChilli" ));
 
+
     CHILLI_CACHE()->insertPixmap( "star_empty", ":/images/nothot" );
     CHILLI_CACHE()->insertPixmap(  "star_filled", ":/images/hot" );
     initCoreComponents( 0 );
