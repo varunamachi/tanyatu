@@ -28,8 +28,8 @@
 #include <QMargins>
 #include <QTime>
 #include <QThread>
-#include <QGraphicsDropShadowEffect>
 #include <QPaintEvent>
+#include <QMouseEvent>
 
 
 #include <core/T.h>
@@ -55,17 +55,15 @@ static void delay()
 
 
 ChilliMainWidget::ChilliMainWidget( QWidget *parent )
-    : QWidget(parent),
-      m_maximizeIcon( new QIcon( ":/images/addfolder_act" )),
-      m_restoreIcon( new QIcon( ":/images/addfiles_act" ))
+    : QWidget( parent )
+    , m_maximizeIcon( new QIcon( ":/images/addfolder_act" ))
+    , m_restoreIcon( new QIcon( ":/images/addfiles_act" ))
+    , m_roundedRect( true )
 {
 
     this->setObjectName( "chillimain" );
 //    DATA_RETRIEVER()->getSavedPlayQueue( );
 //    PLAYQUEUE()->addItems( list );
-
-//    this->setContentsMargins( 1, 1, 1, 1 );
-
     QVBoxLayout *playerLayout = new QVBoxLayout();
     m_audioPlayer = new AudioPlayerWidget( this );
     m_playlist = new PlaylistWidget( this );
@@ -94,14 +92,7 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
     mainLayout->addWidget( m_leftWidget );
     mainLayout->setContentsMargins( QMargins() );
     mainLayout->setSpacing( 0 );
-
-//    QPalette pal = this->palette();
-//    this->setAutoFillBackground( true );
-//    pal.setBrush( QPalette::Window, QColor( Qt::black ));
-//    QBrush brush();
-//    this->setPalette( pal );
     QString css = createStyleSheet();
-//    this->setStyleSheet( css );
     ComponentManager::get()->setStyleSheet( css );
     m_playlist->setStyleSheet( css );
     playerLayout->setContentsMargins( QMargins() );
@@ -125,7 +116,7 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
 void ChilliMainWidget::onAboutToQuit()
 {
     while( JOB_MANAGER()->hasPendingJobs() ) {
-        delay();
+        QThread::currentThread()->sleep( 1 );
     }
     const QList< Tanyatu::Data::MediaItem *> *list =
             PLAYQUEUE()->getAllItemsInOrder();
@@ -138,14 +129,19 @@ void ChilliMainWidget::onAboutToQuit()
 void ChilliMainWidget::paintEvent( QPaintEvent *event )
 {
     QPainter painter( this );
-//    painter.drawRoundedRect( 0, 0, this->width(), this->height(), 5, 5 );
-    QPainterPath path;
-    path.addRoundedRect( 0, 0, this->width(), this->height(), 10, 10 );
-    QBrush brush( Qt::black );
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setRenderHint(QPainter::HighQualityAntialiasing);
-    painter.fillPath( path, brush );
+    if( m_roundedRect ) {
+        QPainterPath path;
+        path.addRoundedRect( this->rect(), 10, 10 );
+        QBrush brush( Qt::black );
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setRenderHint(QPainter::HighQualityAntialiasing);
+        painter.fillPath( path, brush );
+    }
+    else {
+        painter.fillRect( this->rect(), QBrush( Qt::black ));
+    }
 }
+
 
 
 QString ChilliMainWidget::createStyleSheet()
@@ -155,12 +151,6 @@ QString ChilliMainWidget::createStyleSheet()
             "color: #FFA858;"
             "border-color: black;"
         "}"
-//         "QWidget#chillimain{"
-//            "background-color: red; "
-//            "color: #FFA858;"
-//            "border: 5px solid red;"
-//            "border-radius: 8px;"
-//        "}"
         "QPushButton{"
             "background-color: #202020; "
             "color: #FFA858;"
@@ -180,9 +170,9 @@ QString ChilliMainWidget::createStyleSheet()
             "background-color: #202020;"
             "color: white;"
         "}"
-//        "QTreeView::item:hover, QListView::item:hover { "
-//            "background-color: rgba( 255, 168, 48, 130 );"
-//        "}"
+        "QTreeView::item:hover, QListView::item:hover { "
+            "background-color: rgba( 255, 168, 48, 130 );"
+        "}"
         "QProgressBar{ "
             "border-radius: 5px;"
             "color: white;"
@@ -199,34 +189,34 @@ QString ChilliMainWidget::createStyleSheet()
 
 ChilliWindow::ChilliWindow( QWidget *parent )
     : QMainWindow( parent )
-    , m_maximised( false )
     , m_chilliWidget( new ChilliMainWidget( this ))
+    , m_maximised( false )
 {
     this->setWindowFlags( Qt::FramelessWindowHint
                           | Qt::WindowMinimizeButtonHint );
-    m_sizeGrip = new QSizeGrip( this );
-    m_sizeGrip->setFixedSize( 6, 6 );
-    m_sizeGrip->setGeometry( m_chilliWidget->width() - 6, m_chilliWidget->height() - 6, 6, 6 );
-    m_sizeGrip->setStyleSheet( "background-color: yellow;");
-    m_sizeGrip->setToolTip( tr( "Drag to resize the window" ));
-    m_sizeGrip->setContentsMargins( QMargins() );
+//    m_sizeGrip = new QSizeGrip( this );
+//    m_sizeGrip->setFixedSize( 6, 6 );
+//    m_sizeGrip->setGeometry( m_chilliWidget->width() - 6, m_chilliWidget->height() - 6, 6, 6 );
+//    m_sizeGrip->setStyleSheet( "background-color: yellow;");
+//    m_sizeGrip->setToolTip( tr( "Drag to resize the window" ));
+//    m_sizeGrip->setContentsMargins( QMargins() );
+    m_containerWidget = new QWidget( this );
+    m_containerWidget->setContentsMargins( 5, 5, 5, 5 );
 
-    QWidget *temp = new QWidget( this );
-    temp->setContentsMargins( 5, 5, 5, 5 );
+
     m_chilliWidget->setContentsMargins( 5, 5, 5, 5 );
-    m_layout = new QHBoxLayout( temp );
+    m_layout = new QHBoxLayout( m_containerWidget );
     m_layout->addWidget( m_chilliWidget );
-    temp->setAttribute( Qt::WA_TranslucentBackground, true );
+    m_containerWidget->setAttribute( Qt::WA_TranslucentBackground, true );
     this->setAttribute( Qt::WA_TranslucentBackground, true );
-    this->setCentralWidget( temp );
+    this->setCentralWidget( m_containerWidget );
+    m_layout->setSpacing( 5 );
+    m_layout->setContentsMargins( 5, 5, 5, 5 );
 
     CustomShadowEffect *effect = new CustomShadowEffect( this );
-    effect->setBlurRadius( 20.0 );
-    effect->setDistance( 6.0 );
-//    effect->setColor(QColor(0, 0, 0, 80));
-    effect->setColor( QColor( 0xA0, 0x52, 0x2D, 150 ));
-//    effect->setColor( Qt::black );
-//    effect->setOffset( -1.5 );
+    effect->setBlurRadius( 10.0 );
+    effect->setDistance( 3.0 );
+    effect->setColor( QColor( 0xA0, 0x52, 0x2D, 0x80 ));
     m_chilliWidget->setGraphicsEffect( effect );
     connect( ComponentManager::get(),
              SIGNAL( exitRequested() ),
@@ -237,17 +227,9 @@ ChilliWindow::ChilliWindow( QWidget *parent )
              this,
              SLOT( onMinimize() ));
     connect( m_chilliWidget,
-             SIGNAL( maximize() ),
-             this,
-             SLOT( onMaximizeRestore() ) );
-    connect( m_chilliWidget,
              SIGNAL( minimize() ),
              this,
              SLOT( onMinimize() ));
-    connect( m_chilliWidget,
-             SIGNAL( restore() ),
-             this,
-             SLOT( onMaximizeRestore() ));
 }
 
 
@@ -260,14 +242,12 @@ void ChilliWindow::onMinimize()
 void ChilliWindow::onMaximizeRestore()
 {
     if( m_maximised ) {
-//        m_maxRestore->setIcon( *m_maximizeIcon );
         m_maximised = false;
         restore();
     }
     else {
         m_geometry = saveGeometry();
         m_maximised = true;
-//        m_maxRestore->setIcon( *m_restoreIcon );
         maximize();
     }
 }
@@ -323,11 +303,11 @@ void ChilliWindow::showEvent( QShowEvent *evt )
 
 void ChilliWindow::resizeEvent( QResizeEvent *evt )
 {
-    Q_UNUSED( evt )
-    m_sizeGrip->setGeometry( this->width() - 8,
-                             this->height() - 8,
-                             6,
-                             6 );
+//    Q_UNUSED( evt )
+//    m_sizeGrip->setGeometry( this->width() - 8,
+//                             this->height() - 8,
+//                             6,
+//                             6 );
 }
 
 
@@ -337,6 +317,10 @@ void ChilliWindow::maximize()
     QDesktopWidget *desktop = QApplication::desktop();
     // Because reserved space can be on all sides of the scren
     // you have to both move and resize the window
+    m_layout->setSpacing( 0 );
+    m_layout->setContentsMargins( QMargins() );
+    m_containerWidget->setContentsMargins( QMargins() );
+    m_chilliWidget->setRoundedRect( false );
     this->setGeometry( desktop->availableGeometry() );
 }
 
@@ -344,6 +328,10 @@ void ChilliWindow::maximize()
 void ChilliWindow::restore()
 {
     if( ! m_geometry.isEmpty() ) {
+        m_layout->setSpacing( 5 );
+        m_layout->setContentsMargins( 5, 5, 5, 5 );
+        m_containerWidget->setContentsMargins( 5, 5, 5, 5 );
+        m_chilliWidget->setRoundedRect( true );
         this->restoreGeometry( m_geometry );
     }
 }

@@ -46,6 +46,11 @@ public:
 public slots:
     void onAboutToQuit();
 
+    void setRoundedRect( bool useRoundedRect )
+    {
+        m_roundedRect = useRoundedRect;
+    }
+
 signals:
     void maximize();
 
@@ -55,7 +60,6 @@ signals:
 
 protected:
     void paintEvent( QPaintEvent *event );
-
 
 private:
     QString createStyleSheet();
@@ -71,6 +75,8 @@ private:
     PlaylistWidget *m_playlist;
 
     AudioPlayerWidget *m_audioPlayer;
+
+    bool m_roundedRect;
 
 };
 
@@ -118,6 +124,8 @@ private:
     QByteArray m_geometry;
 
     QHBoxLayout *m_layout;
+
+    QWidget *m_containerWidget;
 };
 
 
