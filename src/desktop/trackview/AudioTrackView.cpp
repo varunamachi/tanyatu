@@ -161,17 +161,21 @@ void AudioTrackView::setupUi( QAbstractItemModel *model, quint32 ratingCol )
 
 void AudioTrackView::setupActions()
 {
-    m_actRemove   = new QAction( QIcon( ":/images/remove" ),
-                               tr( "Remove From library" ),
+    m_actRemove   = new QAction(
+//                             QIcon( ":/images/remove" ),
+                               tr( "Remove" ),
                                this );
-    m_actClear    = new QAction( QIcon ( ":/images/clear"),
-                               tr( "Clear Library" ),
+    m_actClear    = new QAction(
+//                               QIcon ( ":/images/clear"),
+                               tr( "Clear" ),
                                this );
-    m_actAddDir   = new QAction( QIcon( ":/images/addfolder" ),
-                               tr( "Add Directory" ),
+    m_actAddDir   = new QAction(
+//                             QIcon( ":/images/addfolder" ),
+                               tr( "+ Folder" ),
                                this );
-    m_actAddFiles = new QAction( QIcon( ":/images/addfiles" ),
-                               tr( "Add Files" ),
+    m_actAddFiles = new QAction(
+//                             QIcon( ":/images/addfiles" ),
+                               tr( "+ Files" ),
                                this );
 
     m_actPlayTracks = new QAction( tr( "Play" ), this );

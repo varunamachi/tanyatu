@@ -56,8 +56,6 @@ static void delay()
 
 ChilliMainWidget::ChilliMainWidget( QWidget *parent )
     : QWidget( parent )
-    , m_maximizeIcon( new QIcon( ":/images/addfolder_act" ))
-    , m_restoreIcon( new QIcon( ":/images/addfiles_act" ))
     , m_roundedRect( true )
 {
 
@@ -154,6 +152,41 @@ QString ChilliMainWidget::createStyleSheet()
         "QPushButton{"
             "background-color: #202020; "
             "color: #FFA858;"
+            "border-width: 8px;"
+            "border-color: black;"
+        "}"
+        "QToolButton{"
+            "background-color: #323232; "
+            "color: #FFA858;"
+            "border-style: outset;"
+            "border-color: black;"
+            "border-radius: 5px;"
+            "min-width: 40px;"
+            "min-height: 20px;"
+        "}"
+         "QToolButton:pressed{"
+           "background-color: #FFA858; "
+           "color: #323232;"
+           "border-style: outset;"
+           "border-color: black;"
+           "border-radius: 5px;"
+           "min-width: 40px;"
+           "min-height: 20px;"
+        "}"
+        "QToolButton:hover{"
+             "color: red;"
+             "border-style: outset;"
+             "border-color: black;"
+             "border-radius: 5px;"
+             "min-width: 40px;"
+             "min-height: 20px;"
+        "}"
+        "QToolBar{"
+            "spacing: 3px;"
+        "}"
+        "QPushButton:clicked{"
+            "background-color: #FFA858; "
+            "color: white;"
             "border-width: 8px;"
             "border-color: black;"
         "}"

@@ -154,25 +154,30 @@ PlaylistView::~PlaylistView()
 
 void PlaylistView::setupActions()
 {
-    m_actAddPlaylist = new QAction( QIcon( ":/images/addfolder" ),
-                                    tr( "Create a playlist" ),
+    m_actAddPlaylist = new QAction(
+//                                    QIcon( ":/images/addfolder" ),
+                                    tr( "Create" ),
                                     this );
-    m_actRemovePlaylist = new QAction( QIcon( ":/images/remove" ),
-                                       tr( "Delete selected playlist(s)" ),
+    m_actRemovePlaylist = new QAction(
+//                                       QIcon( ":/images/remove" ),
+                                       tr( "x Playlist" ),
                                        this );
-    m_actAddToPlayQueue = new QAction( tr( "Add to Play Queue" ),
+    m_actAddToPlayQueue = new QAction( tr( "Queue It" ),
                                        this );
-    m_actAddTracks = new QAction( QIcon( ":/images/addfiles" ),
-                                  tr( "Add tracks to playlist" ),
+    m_actAddTracks = new QAction(
+//                                  QIcon( ":/images/addfiles" ),
+                                  tr( "+ Tracks" ),
                                   this );
 
-    m_actAddTracksToPlayQueue = new QAction( "Add to play queue",
+    m_actAddTracksToPlayQueue = new QAction( "Queue It",
                                        this );
-    m_actRemoveTracks = new QAction( QIcon( ":/images/remove" ),
-                                   tr( "Remove selected tracks from playlist" ),
+    m_actRemoveTracks = new QAction(
+//                                   QIcon( ":/images/remove" ),
+                                   tr( "x Tracks" ),
                                    this );
-    m_actClearPlaylist = new QAction( QIcon( ":/images/clear"),
-                                      tr( "Remove all tracks from playlist" ),
+    m_actClearPlaylist = new QAction(
+//                                      QIcon( ":/images/clear"),
+                                      tr( "Clear" ),
                                       this );
     m_actAddTracksToPlayQueue = new QAction( tr( "Add to play queue" ), this );
 

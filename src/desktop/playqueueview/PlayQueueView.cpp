@@ -186,27 +186,28 @@ void PlaylistWidget::setupToolbar()
     m_toolBar->setContentsMargins(10,0,10,0);
 
     m_addFolderAction = new QAction(
-                QIcon( ":/images/addfolder" ), tr( "Add Folder" ), this );
+                /*QIcon( ":/images/addfolder" ),*/ tr( "+Folder" ), this );
     m_addFolderAction->setShortcut( tr( "Shift+Ctrl+A" ));
     m_toolBar->addAction( m_addFolderAction );
 
     m_addFilesAction  = new QAction(
-                QIcon( ":/images/addfiles"), tr( "Insert Files" ), this );
+                /*QIcon( ":/images/addfiles"),*/ tr( "+Files" ), this );
     m_addFilesAction ->setShortcut( tr( "Shift+Ctrl+S" ));
     m_toolBar->addAction( m_addFilesAction );
 
-    m_toolBar->addSeparator();
+//    m_toolBar->addSeparator();
 
     m_removeAction = new QAction(
-                QIcon( ":/images/remove" ), tr( "Remove" ), this ) ;
+                /*QIcon( ":/images/remove" ),*/ tr( "Remove" ), this ) ;
     m_removeAction->setShortcut( QKeySequence::Delete );
     m_removeAction->setEnabled( false );
     m_toolBar->addAction( m_removeAction );
 
     m_removeAllAction = new QAction(
-                QIcon( ":/images/clear" ), tr( "Clear Playlist" ), this );
+                /*QIcon( ":/images/clear" ),*/ tr( "Clear" ), this );
     m_removeAllAction->setShortcut( tr("Shift+Ctrl+X" ));
     m_toolBar->addAction(m_removeAllAction);
+//    m_toolBar->layout()->setSpacing( 3 );
 
 
     connect( m_addFolderAction,
