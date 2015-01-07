@@ -163,6 +163,7 @@ QString ChilliMainWidget::createStyleSheet()
             "border-radius: 5px;"
             "min-width: 40px;"
             "min-height: 20px;"
+            "font-size: 10px;"
         "}"
          "QToolButton:pressed{"
            "background-color: #FFA858; "

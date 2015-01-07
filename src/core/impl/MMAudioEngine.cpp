@@ -151,6 +151,7 @@ void MMAudioEngine::play()
 void MMAudioEngine::stop()
 {
     m_player->stop();
+    m_player->setMedia( QMediaContent() );
 }
 
 
@@ -204,9 +205,9 @@ void MMAudioEngine::playerStateChangedTo( QMediaPlayer::State state )
 void MMAudioEngine::positionChanged( qint64 pos )
 {
     emit tick( pos );
-    if(( m_player->duration() - pos ) < 1000 ) {
-        emit aboutToFinish( m_currentItem );
-    }
+//    if(( m_player->duration() - pos ) < 1000 ) {
+//        emit aboutToFinish( m_currentItem );
+//    }
 }
 
 

@@ -73,8 +73,9 @@ void ComponentManager::setupUi()
     QHBoxLayout *topLayout = new QHBoxLayout();
     m_buttonLayout->addStretch();
 
-    QPushButton *closeButton = new QPushButton( QIcon( ":/images/clear_act" ),
-                                                "",
+    QPushButton *closeButton = new QPushButton(
+//                                                QIcon( ":/images/clear_act" ),
+                                                "X",
                                                 this );
     closeButton->setFlat( true );
     closeButton->setFixedSize( QSize( 20, 20 ));
@@ -82,8 +83,8 @@ void ComponentManager::setupUi()
     closeButton->setContentsMargins( QMargins() );
 
     QPushButton *minimizeButton = new QPushButton(
-                QIcon( ":/images/remove_act" ),
-                "",
+//                QIcon( ":/images/remove_act" ),
+                "--",
                 this );
     minimizeButton->setFlat( true );
     minimizeButton->setFixedSize( QSize( 24, 24 ));

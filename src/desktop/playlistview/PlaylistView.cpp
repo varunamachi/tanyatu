@@ -56,9 +56,9 @@ PlaylistView::PlaylistView( QWidget *parent ) :
     pltoolbarLayout->addWidget( new QLabel( tr( "Filter Playlists " ), this ));
     pltoolbarLayout->addWidget( m_playlistFilter );
     pltoolbarLayout->addWidget( m_playlistToolbar );
-    QMargins margins = pltoolbarLayout->contentsMargins();
-    margins.setRight( 0 );
-    pltoolbarLayout->setContentsMargins( margins );
+//    QMargins margins = pltoolbarLayout->contentsMargins();
+//    margins.setRight( 0 );
+//    pltoolbarLayout->setContentsMargins( margins );
 
     m_view = new QTreeView( this );
     m_plProxy = new Playlists::PlaylistProxyModel( this );
@@ -89,9 +89,9 @@ PlaylistView::PlaylistView( QWidget *parent ) :
     trackToolbarLayout->addWidget( new QLabel( tr( "Filter Tracks " ), this));
     trackToolbarLayout->addWidget( m_trackFilter );
     trackToolbarLayout->addWidget( m_tracksToolbar );
-    margins = trackToolbarLayout->contentsMargins();
-    margins.setRight( 0 );
-    trackToolbarLayout->setContentsMargins( margins );
+//    margins = trackToolbarLayout->contentsMargins();
+//    margins.setRight( 0 );
+//    trackToolbarLayout->setContentsMargins( margins );
 
     m_trackProxy = new Views::TrackFilter( this );
     m_trackModel = new Tanyatu::Ui::CommonTrackModel( 5, this );
@@ -105,17 +105,17 @@ PlaylistView::PlaylistView( QWidget *parent ) :
     QVBoxLayout *plLayout = new QVBoxLayout();
     plLayout->addLayout( pltoolbarLayout );
     plLayout->addWidget( m_view );
-    plLayout->setSpacing( 0 );
+//    plLayout->setSpacing( 0 );
     plLayout->setContentsMargins( QMargins() );
     QWidget *plWidget = new QWidget( this );
-    plWidget->setContentsMargins( 0, 0, 0, 0 );
+//    plWidget->setContentsMargins( 0, 0, 0, 0 );
     plWidget->setLayout( plLayout );
 
     QVBoxLayout *trackLayout = new QVBoxLayout();
     trackLayout->addLayout( trackToolbarLayout );
     trackLayout->addWidget( m_trackView );
     trackLayout->setContentsMargins( QMargins() );
-    trackLayout->setSpacing( 0 );
+//    trackLayout->setSpacing( 0 );
     QWidget *trackWidget = new QWidget( this );
     trackWidget->setContentsMargins( 0, 0, 0, 0 );
     trackWidget->setLayout( trackLayout );
@@ -126,9 +126,9 @@ PlaylistView::PlaylistView( QWidget *parent ) :
     splitter->addWidget( trackWidget );
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->addWidget( splitter );
-    margins = mainLayout->contentsMargins();
-    margins.setTop( 0 );
-    mainLayout->setContentsMargins( margins );
+//    margins = mainLayout->contentsMargins();
+//    margins.setTop( 0 );
+//    mainLayout->setContentsMargins( margins );
     this->setLayout( mainLayout );
 
     setupActions();
