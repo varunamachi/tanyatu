@@ -48,13 +48,16 @@ public:
                     " QPushButton {"
                     "     border-radius: 5px;"
                     "     background-color: regba( 32, 32, 32, 200 );"
-                    "     min-width: 80px;"
+                    "     min-width: 60px;"
                     "     min-height: 20px;"
                     "     font-size: 10px;"
                     " }"
                     " QPushButton:checked {"
                     "     background-color: #FFA858;"
                     "     color: #202020;"
+                    " }"
+                    " QPushButton:hover{"
+                    "     background-color: #6F5C44;"
                     " }"
          );
         setText( text );
