@@ -73,8 +73,10 @@ protected:
 
     void leaveEvent( QEvent *event );
 
+    void resizeEvent( QResizeEvent *event );
+
 private:
-    quint32 m_width;
+//    quint32 m_width;
 
     quint32 m_height;
 
@@ -86,7 +88,7 @@ private:
 
     quint32 m_drawingHeight;
 
-    quint64 m_maxVal;
+    qreal m_maxVal;
 
     quint64 m_curentVal;
 

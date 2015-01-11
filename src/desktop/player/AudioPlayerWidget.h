@@ -22,11 +22,18 @@
 #pragma once
 
 #include <QWidget>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QMargins>
+
 #include <core/interfaces/IEngine.h>
 #include <core/data/AudioTrack.h>
 
+#include "../widgets/ImagePushButton.h"
 #include "../widgets/SuperSlider.h"
-#include "ui_AudioPlayer.h"
+#include "../widgets/TextScroller.h"
 
 namespace GreenChilli
 {
@@ -77,23 +84,20 @@ private slots:
     void gotoBoringMode()
     {
         setScrollingText();
-        m_playerWidget->seekSlider->setEnabled( false );
-        m_playerWidget->bitrate->setText( "" );
-        m_playerWidget->sampleFreq->setText( "" );
-//        QPalette pal = this->palette();
-//        pal.setBrush( QPalette::Window, QBrush(
-//                          QImage( ":/images/background" )));
-//        this->setPalette( pal );
+        m_seekSlider->setEnabled( false );
+        m_bitrate->setText( "" );
+        m_sampleFreq->setText( "" );
     }
 
     void setScrollingText( QString text = "G R E E N C H I L L I" )
     {
-        m_playerWidget->scroller->setScrollText( text,
-                                          text == "G R E E N C H I L L I" );
+        m_scroller->setScrollText( text, text == "G R E E N C H I L L I" );
     }
 
 private:
-    void init();
+    void setupUi();
+
+    void setupConnections();
 
     void showTrackDetails( Tanyatu::Data::AudioTrack *track );
 
@@ -101,7 +105,40 @@ private:
 
     Tanyatu::IEngine *m_engine;
 
-    Ui::AudioPlayer *m_playerWidget;
+    GreenChilli::Widgets::TextScroller *m_scroller;
+
+    GreenChilli::Widgets::SuperSlider *m_seekSlider;
+
+    GreenChilli::Widgets::SuperSlider *m_volumeSlider;
+
+    GreenChilli::Widgets::ImagePushButton *m_muteButton;
+
+
+    GreenChilli::Widgets::ImagePushButton *m_prevButton;
+
+    GreenChilli::Widgets::ImagePushButton *m_stopButton;
+
+    GreenChilli::Widgets::ImagePushButton *m_playButton;
+
+    GreenChilli::Widgets::ImagePushButton *m_nextButton;
+
+    QPushButton *m_shuffleButton;
+
+    QPushButton *m_repeatButton;
+
+    QLabel *m_volumeLable;
+
+    QLabel *m_elapsedTime;
+
+    QLabel *m_remainingTime;
+
+    QLabel *m_bitrate;
+
+    QLabel *m_sampleFreq;
+
+    QLabel *m_format;
+
+
 
 };
 }

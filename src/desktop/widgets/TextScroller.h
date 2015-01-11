@@ -29,10 +29,10 @@ class TextScroller : public QWidget
 {
     Q_OBJECT
 public:
-    enum ScrollEffect
+    enum class ScrollEffect
     {
-        Effect_Revolve,
-        Effect_Bounce
+        Revolve,
+        Bounce
     };
 
     TextScroller( QWidget *parent = 0 );
@@ -60,6 +60,8 @@ protected:
 
     void mouseReleaseEvent( QMouseEvent *event );
 
+    void resizeEvent( QResizeEvent *event );
+
 private slots:
     void preparePixmap();
 
@@ -69,8 +71,8 @@ private slots:
 
 private:
     enum Progression {
-        Progress_Forward,
-        Progress_Backward
+        Forward,
+        Backward
     };
 
     ScrollEffect m_effect;

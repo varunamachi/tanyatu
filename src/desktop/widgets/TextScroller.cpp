@@ -25,6 +25,7 @@
 #include <QTimer>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QResizeEvent>
 
 #include "TextScroller.h"
 
@@ -32,17 +33,19 @@ namespace GreenChilli { namespace Widgets {
 
 TextScroller::TextScroller( QWidget *parent )
     : QWidget( parent ),
-      m_progression( Progress_Forward ),
+      m_progression( Progression::Forward ),
       m_forceAnimate( false ),
       m_notAnimating( true ),
       m_mouseXPress( -1 ),
       m_pixelFactor( 1.0 )
 {
-    setParameters( Effect_Bounce, 380, 60, 30 );
+    this->setSizePolicy( QSizePolicy::Expanding,
+                         QSizePolicy::Expanding );
+    setParameters( ScrollEffect::Bounce, 380, 60, 30 );
     m_fullPixmap = new QPixmap(  );
-    m_currentPixmap = new QPixmap(m_displayLength, m_displayHeight);
+    m_currentPixmap = new QPixmap( m_displayLength, m_displayHeight );
     m_timer = new QTimer( this );
-    m_timer->setInterval( 400 );
+    m_timer->setInterval( 40 );
     m_textColor = QColor( 255, 168, 88 );
     connect( m_timer, SIGNAL( timeout() ),
              this, SLOT( onTimeOut() ));
@@ -100,14 +103,16 @@ void TextScroller::paintEvent( QPaintEvent *event )
 {
     Q_UNUSED( event )
     QPainter painter( this );
+    painter.fillRect( this->rect(), Qt::black );
     painter.drawPixmap( 0, 0, *m_currentPixmap );
 }
 
 
 void TextScroller::preparePixmap()
 {
-//    m_currentPixmap->fill( QColor( 0, 0, 0, 0 ));
-    m_currentPixmap->fill( QColor( 0, 0, 0, 60 ));
+    delete m_currentPixmap;
+    m_currentPixmap = new QPixmap( m_displayLength, m_displayHeight );
+    m_currentPixmap->fill( QColor( 0, 0, 0, 0 ));
     QPainter painter( m_currentPixmap );
     if(( m_imageWidth - m_xOffset * 2 ) < m_displayLength && ! m_forceAnimate )
     {
@@ -121,7 +126,7 @@ void TextScroller::preparePixmap()
                             actualPixmap );
         m_notAnimating = true;
     }
-    else if( m_effect == Effect_Revolve )
+    else if( m_effect == ScrollEffect::Revolve )
     {
         if( m_startIndex + m_displayLength > m_imageWidth ) {
             QPixmap first = m_fullPixmap->copy( m_startIndex,
@@ -151,56 +156,56 @@ void TextScroller::preparePixmap()
         if( m_imageWidth <= m_displayLength ) {
             painter.drawPixmap( m_startIndex, 0, *m_fullPixmap );
             if( m_startIndex + m_imageWidth > m_displayLength ) {
-                m_progression = Progress_Backward;
+                m_progression = Progression::Backward;
             }
-            if ( m_startIndex == 0 ){
-                m_progression = Progress_Forward;
+            if ( m_startIndex <= 0 ){
+                m_progression = Progression::Forward;
             }
         }
         else {
-            QPixmap show = m_fullPixmap->copy( m_startIndex,
-                                           0,
-                                           m_displayLength,
-                                           m_displayHeight );
-            painter.drawPixmap( 0, 0, show );
-            if( m_startIndex + m_displayLength > m_imageWidth ) {
-                m_progression = Progress_Backward;
+            painter.drawPixmap( m_startIndex, 0, *m_fullPixmap );
+            if( m_startIndex + m_imageWidth >  m_displayLength * 1.5 ) {
+                m_progression = Progression::Backward;
             }
-            if( m_startIndex == 0 ) {
-                m_progression = Progress_Forward;
+            if( m_startIndex <= - m_imageWidth / 2 ) {
+                m_progression = Progression::Forward;
             }
         }
-        m_startIndex = ( m_progression == Progress_Forward ? m_startIndex + 1
-                                                           : m_startIndex - 1 );
+        m_startIndex = ( m_progression == Progression::Forward
+                                        ? m_startIndex + 1
+                                        : m_startIndex - 1 );
         m_notAnimating = false;
     }
 }
 
 
 void TextScroller::processText( QString text ) {
-    delete m_fullPixmap;
-    m_fullPixmap = new QPixmap( text.size() * 16,
-                                m_displayHeight );
-    m_fullPixmap->fill( qRgba( 0, 0, 0, 0 ));
-
-    ///TODO something else...
-//    QPixmap copy = m_fullPixmap->copy( m_fullPixmap->rect() );
-//    m_fullPixmap->setAlphaChannel( copy );
-
-    QPainter pxPainter( m_fullPixmap );
-    pxPainter.setRenderHint( QPainter::Antialiasing, true );
-#ifdef Q_OS_LINUX
-    pxPainter.setFont( QFont( QFont().defaultFamily(), 10 ));
-#else
-    pxPainter.setFont( QFont( "monospace", 10 ));
+    QFont font( QFont().defaultFamily(), 8 );
+#ifdef Q_OS_WIN32
+    font = QFont( "monospace", 8 );
 #endif
-    pxPainter.setPen( m_textColor );
-    pxPainter.drawText( m_xOffset, 20, text);
 
-    QFontMetrics metric = pxPainter.fontMetrics();
+    QPixmap dummy( 100, 100 );
+    QPainter dummyPainter( &dummy );
+    dummyPainter.setFont( font );
+    QFontMetrics metric = dummyPainter.fontMetrics();
     m_imageWidth = metric.width( text ) + m_xOffset * 2;
     m_pixelFactor = metric.width( text );
-    m_progression = Progress_Forward;
+
+    delete m_fullPixmap;
+
+    m_fullPixmap = new QPixmap( m_imageWidth,
+                                m_displayHeight );
+    m_fullPixmap->fill( qRgba( 0, 0, 0, 0  ));
+    QPainter pxPainter( m_fullPixmap );
+    pxPainter.setFont( font );
+    pxPainter.setRenderHint( QPainter::Antialiasing, true );
+    pxPainter.setRenderHint(QPainter::HighQualityAntialiasing);
+    pxPainter.setPen( m_textColor );
+    pxPainter.drawText( m_xOffset, metric.height(), text);
+
+
+    m_progression = Progression::Forward;
 }
 
 
@@ -211,6 +216,7 @@ void TextScroller::mouseMoveEvent( QMouseEvent *event )
 //        m_startIndex +=  - ( event->x() - m_mouseXPress );
 //        onTimeOut();
 //    }
+    event->ignore();
 }
 
 void TextScroller::mousePressEvent(QMouseEvent *event)
@@ -224,6 +230,12 @@ void TextScroller::mouseReleaseEvent(QMouseEvent *event)
     Q_UNUSED( event )
     m_timer->start();
     m_mouseXPress = -1;
+}
+
+void TextScroller::resizeEvent( QResizeEvent *event )
+{
+    m_displayLength = event->size().width();
+//    preparePixmap();
 }
 
 } }

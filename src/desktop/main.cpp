@@ -46,6 +46,8 @@
 #include "viewcommon/CommonAudioTrackView.h"
 #include "viewcommon/RatingDelegate.h"
 
+#include "player/PlayerControlWidget.h"
+
 
 void initCoreComponents( QObject *parent )
 {
@@ -130,7 +132,6 @@ int main(int argc, char *argv[])
     QCoreApplication::instance()->setApplicationName( "GreenChilli" );
     a.setApplicationName( QObject::tr( "GreenChilli" ));
 
-
     CHILLI_CACHE()->insertPixmap( "star_empty", ":/images/nothot" );
     CHILLI_CACHE()->insertPixmap(  "star_filled", ":/images/hot" );
     initCoreComponents( 0 );
@@ -139,6 +140,8 @@ int main(int argc, char *argv[])
     win.setWindowIcon( QIcon( ":/images/greenchilli" ));
     initUiComponents( &win );
     win.show();
+//    GreenChilli::PlayerControlWidget win;
+//    win.show();
     return a.exec();
 }
 

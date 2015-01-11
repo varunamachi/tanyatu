@@ -34,7 +34,8 @@
 #include  "ui_AudioPlayer.h"
 #include "AudioPlayerWidget.h"
 
-
+#define NO_MARGINS( layout ) \
+    layout->setContentsMargins( QMargins() ); \
 
 
 using namespace GreenChilli;
@@ -44,30 +45,136 @@ AudioPlayerWidget::AudioPlayerWidget(QWidget *parent) :
     QWidget(parent),
     m_engine( Tanyatu::T::get()->audioEngine() )
 {
-    init();
+    setupUi();
+    setupConnections();
     setupButtons();
 }
 
 
-void AudioPlayerWidget::init()
+void AudioPlayerWidget::setupUi()
 {
-    this->setFixedSize( AUDIO_PLAYER_WIDTH, AUDIO_PLAYER_HEIGHT );
-    m_playerWidget = new Ui::AudioPlayer();
-    m_playerWidget->setupUi( this );
-    m_playerWidget->seekSlider->setWidth( 250 );
-    m_playerWidget->seekSlider->setHeight( 3 );
+    m_scroller      = new GreenChilli::Widgets::TextScroller( this );
+    m_seekSlider    = new GreenChilli::Widgets::SuperSlider( this );
 
-    m_playerWidget->volumeSlider->setWidth( 80 );
-    m_playerWidget->volumeSlider->setMaxValue( 100 );
-    m_playerWidget->volumeSlider->setHeight( 3 );
+    m_prevButton    = new GreenChilli::Widgets::ImagePushButton( this );
+    m_stopButton    = new GreenChilli::Widgets::ImagePushButton( this );
+    m_playButton    = new GreenChilli::Widgets::ImagePushButton( this );
+    m_nextButton    = new GreenChilli::Widgets::ImagePushButton( this );
+
+    m_shuffleButton = new QPushButton( tr( "SHFL" ));
+    m_repeatButton  = new QPushButton( tr( "OFF"));
+
+    m_muteButton    = new GreenChilli::Widgets::ImagePushButton();
+    m_volumeLable   = new QLabel( "100" );
+    m_volumeSlider  = new GreenChilli::Widgets::SuperSlider();
+
+    m_elapsedTime   = new QLabel( "--:--" );
+    m_remainingTime = new QLabel( "--:--" );
+    m_bitrate       = new QLabel( "--- kbps" );
+    m_sampleFreq    = new QLabel( "-- Hz" );
+    m_format        = new QLabel( "****" );
+
+    m_muteButton->setIcons( QIcon( ":/images/muteoff" ),
+                            QIcon( ":/images/muteon" ),
+                            QSize( 16, 16 ));
+    m_prevButton->setIcons( QIcon( ":/images/prev"),
+                            QIcon( ":/images/prev_act" ),
+                            QSize( 32, 32 ));
+    m_stopButton->setIcons( QIcon( ":/images/stop"),
+                            QIcon( ":/images/stop_act" ),
+                            QSize( 32, 32 ) );
+    m_playButton->setIcons( QIcon( ":/images/play"),
+                            QIcon( ":/images/play_act" ),
+                            QSize( 32, 32 ));
+    m_nextButton->setIcons( QIcon( ":/images/next"),
+                            QIcon( ":/images/next_act" ),
+                            QSize( 32, 32 ));
+
+    QHBoxLayout *lytPlayCtrl = new QHBoxLayout();
+    lytPlayCtrl->addWidget( m_prevButton );
+    lytPlayCtrl->addWidget( m_stopButton );
+    lytPlayCtrl->addWidget( m_playButton );
+    lytPlayCtrl->addWidget( m_nextButton );
+
+    QHBoxLayout *lytVolume = new QHBoxLayout();
+    lytVolume->addWidget( m_muteButton );
+    lytVolume->addWidget( m_volumeSlider );
+    lytVolume->addWidget( m_volumeLable );
+    lytVolume->setSpacing( 2 );
+//    volumeSlider->setHeight( 19 );
+    m_muteButton->setCheckable( true );
+    QWidget *volWidget = new QWidget( this );
+    volWidget->setLayout( lytVolume );
+    volWidget->setMaximumWidth( 140 );
+
+    QHBoxLayout *lytSeeker = new QHBoxLayout();
+    lytSeeker->addWidget( m_elapsedTime );
+    lytSeeker->addWidget( m_seekSlider );
+    lytSeeker->addWidget( m_remainingTime );
+    m_seekSlider->setWidth( 200 );
+
+    QVBoxLayout *lytScrollerSeeker = new QVBoxLayout();
+    lytScrollerSeeker->addWidget( m_scroller );
+    lytScrollerSeeker->addLayout( lytSeeker );
+    lytScrollerSeeker->setSpacing( 0 );
+    m_scroller->setScrollText( " G R E E N C H I L L I ", true );
+    m_scroller->setParameters( Widgets::TextScroller::ScrollEffect::Bounce,
+                             100,
+                             32,
+                             0 );
+
+    QVBoxLayout *lytRepShfl = new QVBoxLayout();
+    lytRepShfl->addWidget( m_repeatButton );
+    lytRepShfl->addWidget( m_shuffleButton );
+    m_shuffleButton->setCheckable( true );
+    QString stylesheet =  " QPushButton {"
+                          "     border-radius: 5px;"
+                          "     background-color: regba( 32, 32, 32, 200 );"
+                          "     max-width: 30px;"
+                          "     max-height:14px;"
+                          "     min-width: 30px;"
+                          "     min-height: 14px;"
+                          "     font-size: 8px;"
+                          " }"
+                          " QPushButton:checked {"
+                          "     background-color: #FFA858;"
+                          "     color: #202020;"
+                          " }"
+                          " QPushButton:hover{"
+                          "     background-color: #FFA858;"
+                          "     color: red;"
+                          " }";
+    m_shuffleButton->setStyleSheet( stylesheet );
+    m_repeatButton->setStyleSheet( stylesheet );
+
+
+    QHBoxLayout *lytMaster = new QHBoxLayout();
+    lytMaster->addLayout( lytPlayCtrl );
+//    lytMaster->addLayout( lytVolume );
+    lytMaster->addWidget( volWidget );
+    lytMaster->addLayout( lytScrollerSeeker );
+    lytMaster->addLayout( lytRepShfl );
+    this->setLayout( lytMaster );
+    NO_MARGINS( lytMaster );
+
+    m_bitrate    ->hide();
+    m_sampleFreq ->hide();
+    m_format     ->hide();
+
     QPalette pal = this->palette();
     this->setAutoFillBackground( true );
-    pal.setBrush( QPalette::Window, QBrush( QImage( ":/images/background" )));
+//    pal.setBrush( QPalette::Window, QBrush( QImage( ":/images/background" )));
     this->setPalette( pal );
     this->setAcceptDrops( true );
 
     setScrollingText();
 
+    this->setFixedHeight( 48 );
+}
+
+
+void AudioPlayerWidget::setupConnections()
+{
     connect( m_engine,
              SIGNAL( stateChanged( Tanyatu::IEngine::State,
                                    Tanyatu::IEngine::State )),
@@ -75,28 +182,26 @@ void AudioPlayerWidget::init()
              SLOT(engineStateChanged( Tanyatu::IEngine::State,
                                       Tanyatu::IEngine::State )));
     connect( m_engine, SIGNAL( tick(qint64) ),
-             m_playerWidget->seekSlider, SLOT( setCurrentValue( qint64 )));
-    connect( m_playerWidget->seekSlider, SIGNAL( seeked( qint64 )),
+             m_seekSlider, SLOT( setCurrentValue( qint64 )));
+    connect( m_seekSlider, SIGNAL( seeked( qint64 )),
              m_engine, SLOT( seek(qint64 )));
-    connect( m_playerWidget->volumeSlider, SIGNAL( seeked( qint64 )),
+    connect( m_volumeSlider, SIGNAL( seeked( qint64 )),
              this, SLOT( setVolume( qint64 )));
-    connect( m_playerWidget->volumeSlider, SIGNAL( valueChanged( qint64 )),
+    connect( m_volumeSlider, SIGNAL( valueChanged( qint64 )),
              this, SLOT( setVolumeLabelText( qint64 )));
-    connect( m_playerWidget->muteButton, SIGNAL( clicked( bool )),
+    connect( m_muteButton, SIGNAL( clicked( bool )),
              m_engine, SLOT( mute( bool )));
-    connect( m_playerWidget->chilli, SIGNAL( clicked( bool )),
-             this, SLOT( onChilliClicked(bool) ));
     connect( m_engine, SIGNAL( volumeChanged( int )),
              this, SLOT( setVolmeSliderValue( int )));
-    connect( m_playerWidget->shuffleButton, SIGNAL( clicked( bool )),
+    connect( m_shuffleButton, SIGNAL( clicked( bool )),
              PLAYQUEUE(), SLOT( setRandom( bool )));
-    connect( m_playerWidget->nextButton, SIGNAL( clicked() ),
+    connect( m_nextButton, SIGNAL( clicked() ),
              PLAYQUEUE(), SLOT( selectNext() ));
-    connect( m_playerWidget->prevButton, SIGNAL( clicked() ),
+    connect( m_prevButton, SIGNAL( clicked() ),
              PLAYQUEUE(), SLOT( selectPrevious() ));
     connect( PLAYQUEUE(), SIGNAL( playQueueChanged() ),
              this, SLOT( updatePlayerActions() ));
-    connect( m_playerWidget->repeatButton, SIGNAL( clicked() ),
+    connect( m_repeatButton, SIGNAL( clicked() ),
              this, SLOT( onRepeatButtonClicked() ));
     connect( m_engine, SIGNAL( sourceChanged( Tanyatu::Data::MediaItem * )),
              this, SLOT( onTrackSelected( Tanyatu::Data::MediaItem * )));
@@ -106,8 +211,8 @@ void AudioPlayerWidget::init()
              this, SLOT( gotoBoringMode() ));
     connect( m_engine, SIGNAL( tick( qint64 )),
              this, SLOT( onPlayerTick( qint64 )));
-    m_playerWidget->seekSlider->setEnabled( false );
-    m_playerWidget->volumeSlider->setEnabled( false );
+    m_seekSlider->setEnabled( false );
+    m_volumeSlider->setEnabled( false );
     updatePlayerActions();
     gotoBoringMode();
 }
@@ -117,39 +222,9 @@ void AudioPlayerWidget::init()
 void AudioPlayerWidget::setupButtons()
 {
 
-    m_playerWidget->prevButton->setIcons( QIcon( ":/images/prev"),
-                                          QIcon( ":/images/prev_act" ),
-                                          QSize( 32, 32 ) );
-//    m_playerWidget->playButton->setCheckable( true );
-    m_playerWidget->stopButton->setEnabled( false );
-    m_playerWidget->playButton->setIcons( QIcon( ":/images/play"),
-                                          QIcon( ":/images/play_act" ),
-                                          QSize( 32, 32 ) );
-    m_playerWidget->stopButton->setIcons( QIcon( ":/images/stop"),
-                                          QIcon( ":/images/stop_act" ),
-                                          QSize( 32, 32 ) );
-    m_playerWidget->nextButton->setIcons( QIcon( ":/images/next"),
-                                          QIcon( ":/images/next_act" ),
-                                          QSize( 32, 32 ) );
-    m_playerWidget->shuffleButton->setIcons( QIcon( ":/images/shuffle" ),
-                                            QIcon( ":/images/shuffle_act" ),
-                                            QSize( 24, 24 ) );
-    m_playerWidget->shuffleButton->setCheckable( true );
-    m_playerWidget->repeatButton->setIcons( QIcon( ":/images/repeatall_act" ),
-                                            QIcon( ":/images/repeatone_act" ),
-                                            QSize( 24, 24 ) );
-
-    m_playerWidget->chilli->setIcons( QIcon( ":/images/chilliabt" ),
-                                            QIcon( ":/images/chilliabt_act" ),
-                                            QSize( 24, 24 ) );
-
-    m_playerWidget->muteButton->setCheckable( true );
-    m_playerWidget->muteButton->setIcons( QIcon( ":/images/muteoff" ),
-                                          QIcon( ":/images/muteon" ),
-                                          QSize( 16, 16 ) );
-    connect( m_playerWidget->stopButton, SIGNAL( clicked() ),
+    connect( m_stopButton, SIGNAL( clicked() ),
              m_engine, SLOT( stop() ));
-    connect( m_playerWidget->playButton, SIGNAL( clicked() ),
+    connect( m_playButton, SIGNAL( clicked() ),
              this, SLOT( onPlayButtonClicked() ));
 }
 
@@ -162,51 +237,51 @@ void AudioPlayerWidget::engineStateChanged(
     Q_UNUSED( oldState )
     updatePlayerActions();
     if( ! m_engine->currentItem()
-        || newState == Tanyatu::IEngine::State::Error
-        || newState == Tanyatu::IEngine::State::Loading
-        || newState == Tanyatu::IEngine::State::Buffering )
+            || newState == Tanyatu::IEngine::State::Error
+            || newState == Tanyatu::IEngine::State::Loading
+            || newState == Tanyatu::IEngine::State::Buffering )
     {
-        m_playerWidget->playButton->setEnabled( false );
-        m_playerWidget->stopButton->setEnabled( false );
-        m_playerWidget->seekSlider->setEnabled( false );
-        m_playerWidget->volumeSlider->setEnabled( false );
+        m_playButton->setEnabled( false );
+        m_stopButton->setEnabled( false );
+        m_seekSlider->setEnabled( false );
+        m_volumeSlider->setEnabled( false );
     }
     if( newState == Tanyatu::IEngine::State::Playing )
     {
-        m_playerWidget->seekSlider->setMaxValue(
+        m_seekSlider->setMaxValue(
                     m_engine->currentItemTotalTime() );
-        m_playerWidget->playButton->setEnabled( true );
-        m_playerWidget->stopButton->setEnabled( true);
-        m_playerWidget->playButton->setIcons( QIcon( ":/images/pause_act" ),
-                                             QIcon( ":/images/pause_act" ),
-                                             QSize( 32, 32 ));
-         m_playerWidget->seekSlider->setEnabled( true );
-         m_playerWidget->volumeSlider->setEnabled( true );
-         if( m_engine->volume() > 100 ) {
-             m_engine->setVolume( 100 );
-         }
-         m_playerWidget->volumeSlider->setCurrentValue( m_engine->volume() );
+        m_playButton->setEnabled( true );
+        m_stopButton->setEnabled( true);
+        m_playButton->setIcons( QIcon( ":/images/pause_act" ),
+                                QIcon( ":/images/pause_act" ),
+                                QSize( 32, 32 ));
+        m_seekSlider->setEnabled( true );
+        m_volumeSlider->setEnabled( true );
+        if( m_engine->volume() > 100 ) {
+            m_engine->setVolume( 100 );
+        }
+        m_volumeSlider->setCurrentValue( m_engine->volume() );
     }
     else if( newState == Tanyatu::IEngine::State::Paused )
     {
-        m_playerWidget->playButton->setEnabled( true );
-        m_playerWidget->playButton->setIcons( QIcon( ":/images/play" ),
-                                              QIcon( ":/images/play_act" ),
-                                              QSize( 32, 32 ));
-         m_playerWidget->seekSlider->setEnabled( false );
-         m_playerWidget->volumeSlider->setEnabled( true );
+        m_playButton->setEnabled( true );
+        m_playButton->setIcons( QIcon( ":/images/play" ),
+                                QIcon( ":/images/play_act" ),
+                                QSize( 32, 32 ));
+        m_seekSlider->setEnabled( false );
+        m_volumeSlider->setEnabled( true );
 
     }
     else if( newState == Tanyatu::IEngine::State::Stopped )
     {
-        m_playerWidget->playButton->setEnabled( true );
-        m_playerWidget->stopButton->setEnabled( false );
-        m_playerWidget->playButton->setIcons( QIcon( ":/images/play" ),
-                                              QIcon( ":/images/play_act" ),
-                                              QSize( 32, 32 ));
-        m_playerWidget->seekSlider->setEnabled( false );
-        m_playerWidget->volumeSlider->setEnabled( false );
-        m_playerWidget->seekSlider->setCurrentValue( 0 );
+        m_playButton->setEnabled( true );
+        m_stopButton->setEnabled( false );
+        m_playButton->setIcons( QIcon( ":/images/play" ),
+                                QIcon( ":/images/play_act" ),
+                                QSize( 32, 32 ));
+        m_seekSlider->setEnabled( false );
+        m_volumeSlider->setEnabled( false );
+        m_seekSlider->setCurrentValue( 0 );
     }
 }
 
@@ -217,23 +292,23 @@ void AudioPlayerWidget::setVolume(qint64 value)
 
 void AudioPlayerWidget::setVolmeSliderValue( int volume )
 {
-    m_playerWidget->volumeSlider->setCurrentValue( volume );
-    m_playerWidget->volumeLable->setText( QString::number( volume ));
+    m_volumeSlider->setCurrentValue( volume );
+    m_volumeLable->setText( QString::number( volume ));
 }
 
 
 void AudioPlayerWidget::setVolumeLabelText( qint64 value )
 {
-    m_playerWidget->volumeLable->setText( QString::number( value ));
+    m_volumeLable->setText( QString::number( value ));
 }
 
 
 void AudioPlayerWidget::onPlayButtonClicked()
 {
-    if( ! m_playerWidget->playButton->isChecked()
-        && m_engine->state() == Tanyatu::IEngine::State::Playing ) {
+    if( ! m_playButton->isChecked()
+            && m_engine->state() == Tanyatu::IEngine::State::Playing ) {
         m_engine->pause();
-        m_playerWidget->seekSlider->setEnabled( false );
+        m_seekSlider->setEnabled( false );
     }
     else {
         if( m_engine->currentItem() ) {
@@ -254,78 +329,68 @@ void AudioPlayerWidget::onRepeatButtonClicked()
     {
     case Tanyatu::IPlayQueue::RepeatType_NoRepeat:
         PLAYQUEUE()->setRepeat(
-                  Tanyatu::IPlayQueue::RepeatType_RepeatAll );
-        m_playerWidget->repeatButton->setIcons(
-                    QIcon( ":/images/repeatall_act" ),
-                    QIcon( ":/images/repeatone_act"),
-                    QSize( 24, 24 ));
+                    Tanyatu::IPlayQueue::RepeatType_RepeatAll );
+        m_repeatButton->setText( tr( "OFF" ));
         break;
 
     case Tanyatu::IPlayQueue::RepeatType_RepeatAll:
         PLAYQUEUE()->setRepeat(
-                  Tanyatu::IPlayQueue::RepeatType_RepeatOne );
-        m_playerWidget->repeatButton->setIcons(
-                    QIcon( ":/images/repeatone_act" ),
-                    QIcon( ":/images/repeatall"),
-                    QSize( 24, 24 ));
+                    Tanyatu::IPlayQueue::RepeatType_RepeatOne );
+        m_repeatButton->setText( tr( "ALL" ));
         break;
 
     case Tanyatu::IPlayQueue::RepeatType_RepeatOne:
         PLAYQUEUE()->setRepeat(
-                  Tanyatu::IPlayQueue::RepeatType_NoRepeat );
-        m_playerWidget->repeatButton->setIcons(
-                    QIcon( ":/images/repeatall" ),
-                    QIcon( ":/images/repeatall_act"),
-                    QSize( 24, 24 ));
+                    Tanyatu::IPlayQueue::RepeatType_NoRepeat );
+        m_repeatButton->setText( tr( "ONE" ));
         break;
     }
 }
 
 void AudioPlayerWidget::updatePlayerActions()
 {
-    m_playerWidget->nextButton->setEnabled( PLAYQUEUE()->hasNext() );
-    m_playerWidget->prevButton->setEnabled( PLAYQUEUE()->hasPrev() );
+    m_nextButton->setEnabled( PLAYQUEUE()->hasNext() );
+    m_prevButton->setEnabled( PLAYQUEUE()->hasPrev() );
 }
 
 
 void AudioPlayerWidget::onTrackSelected( Tanyatu::Data::MediaItem * item )
 {
     if( item && ( item->type() == Tanyatu::Data::Media_LocalAudio
-            || item->type() == Tanyatu::Data::Media_StoredAudio )) {
-        m_playerWidget->chilli->setChecked( false );
+                  || item->type() == Tanyatu::Data::Media_StoredAudio )) {
         Tanyatu::Data::AudioTrack *track =
                 static_cast< Tanyatu::Data::AudioTrack *>( item );
         showTrackDetails( track );
-        m_playerWidget->bitrate->setText( QString( "%1kbps" ).arg(
-                                              track->bitRate() ));
-        m_playerWidget->sampleFreq->setText(
+        m_bitrate->setText( QString( "%1kbps" ).arg(
+                                track->bitRate() ));
+        m_sampleFreq->setText(
                     QString( "%1.%2KHz" )
                     .arg( track->sampleRate() / 1000 )
                     .arg( track->sampleRate() % 1000 / 100 ));
         QFileInfo info( track->url().toLocalFile() );
-        m_playerWidget->format->setText( info.suffix().toUpper() );
-        m_playerWidget->elapsedTime->setText( "00:00" );
-        m_playerWidget->remainingTime->setText(
+        m_format->setText( info.suffix().toUpper() );
+        m_elapsedTime->setText( "00:00" );
+        m_remainingTime->setText(
                     Tanyatu::Utils::getStringTime( track->duration() ));
 
-        QImage *image = nullptr;//Tanyatu::Utils::imageForTrack( track );
-        image = image != nullptr ? image
-                                 : new QImage( ":/images/defaultcover" );
-        QPixmap pixmap;
-        pixmap.convertFromImage( *image );
-        delete image;
-        QPixmap background = QPixmap( ":/images/background" ).scaled(
-                    this->size() );
-        QPixmap result( background.size() );
-        result.fill( Qt::transparent );
-        QPainter painter( &result );
-        painter.drawPixmap( 0, 0, pixmap.scaled( background.size() ));
-        painter.setOpacity( 0.70 );
-        painter.drawPixmap( 0, 0, background );
-        QPalette pal = this->palette();
-        pal.setBrush( QPalette::Window,
-                      QBrush( result ));
-        this->setPalette( pal );
+//        QImage *image = nullptr;//Tanyatu::Utils::imageForTrack( track );
+//        image = image != nullptr ? image
+//                                 : new QImage( ":/images/defaultcover" );
+//        QPixmap pixmap;
+//        pixmap.convertFromImage( *image );
+//        delete image;
+//        QPixmap background = QPixmap( ":/images/background" ).scaled(
+//                    this->size() );
+//        QPixmap result( background.size() );
+//        result.fill( Qt::transparent );
+//        QPainter painter( &result );
+//        painter.drawPixmap( 0, 0, pixmap.scaled( background.size() ));
+//        painter.setOpacity( 0.70 );
+//        painter.drawPixmap( 0, 0, background );
+//        QPalette pal = this->palette();
+//        pal.setBrush( QPalette::Window,
+//                      QBrush( result ));
+//        this->setPalette( pal );
 
     }
 }
@@ -339,9 +404,9 @@ void AudioPlayerWidget::onPlayerTick( qint64 msecEllapsed )
     {
         Tanyatu::Data::AudioTrack *track =
                 static_cast< Tanyatu::Data::AudioTrack *>( item );
-        m_playerWidget->elapsedTime->setText( Tanyatu::Utils::getStringTime(
-                                                  msecEllapsed / 1000 ));
-        m_playerWidget->remainingTime->setText(
+        m_elapsedTime->setText( Tanyatu::Utils::getStringTime(
+                                    msecEllapsed / 1000 ));
+        m_remainingTime->setText(
                     Tanyatu::Utils::getStringTime(
                         track->duration() - ( msecEllapsed /1000 )));
     }
@@ -351,7 +416,7 @@ void AudioPlayerWidget::onPlayerTick( qint64 msecEllapsed )
 void AudioPlayerWidget::onChilliClicked( bool checked )
 {
     if( checked ) {
-        m_playerWidget->scroller->setScrollText(
+        m_scroller->setScrollText(
                     "( GREENCHILLI + TANYATU ) by: VARUNA L AMACHI ", true );
     }
     else {
@@ -383,7 +448,7 @@ void AudioPlayerWidget::showTrackDetails( Tanyatu::Data::AudioTrack *track )
     }
     trackString += QString( "  ~  " ) + Tanyatu::Utils::getStringTime(
                 track->duration() );
-    m_playerWidget->scroller->setScrollText( trackString );
+    m_scroller->setScrollText( trackString );
 }
 
 

@@ -23,6 +23,7 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <QStyle>
+#include <QResizeEvent>
 
 #include "SuperSlider.h"
 
@@ -31,12 +32,12 @@ namespace GreenChilli { namespace Widgets {
 
 SuperSlider::SuperSlider( QWidget *parent ) :
     QWidget( parent ),
-    m_width( 100 ),
-    m_height( 10 ),
+//  m_width( 100 ),
+    m_height( 20 ),
     m_drawOffset( 16 ),
     m_halfDrawOffset( m_drawOffset / 2 ),
-    m_drawingWidth( m_width + m_drawOffset ),
-    m_drawingHeight( m_height + m_drawOffset ),
+    m_drawingWidth( this->width() - m_drawOffset ),
+    m_drawingHeight( m_height - m_drawOffset ),
     m_maxVal( 100 ),
     m_curentVal( 0 ),
     m_brush( QBrush( QColor( 0xFF, 0x66, 0 ))),
@@ -46,25 +47,28 @@ SuperSlider::SuperSlider( QWidget *parent ) :
 
 {
     this->setMouseTracking( true );
-    this->setFixedSize( m_drawingWidth, m_drawingHeight );
+    this->setFixedHeight( m_height );
     this->setContentsMargins( 0, 0, 0, 0 );
+    this->setSizePolicy( QSizePolicy::Expanding,
+                         QSizePolicy::Expanding );
 }
 
 
 void SuperSlider::setHeight( int height )
 {
     m_height = height;
-    m_drawingHeight = height + m_drawOffset;
-    this->setFixedSize( m_drawingWidth, m_drawingHeight );
+    m_drawingHeight = height - m_drawOffset;
+    this->setFixedHeight( m_height );
     update();
 }
 
 
 void SuperSlider::setWidth( int width )
 {
-    m_width = width;
-    m_drawingWidth = width + m_drawOffset;
-    this->setFixedSize( m_drawingWidth, m_drawingHeight );
+//    this->width() = width;
+
+    m_drawingWidth = width - m_drawOffset;
+    this->setMinimumWidth( width );
     update();
 }
 
@@ -94,35 +98,37 @@ void SuperSlider::paintEvent( QPaintEvent *event )
 {
     Q_UNUSED( event )
     QPainter painter( this );
+//    painter.fillRect( this->rect(), Qt::red );
+
     QBrush brush = m_enabled ? m_brush : m_backgroundBrush;
-    int curPos =  ( float( m_curentVal ) / m_maxVal ) * m_width;
+    int curPos =  ( float( m_curentVal ) / m_maxVal ) * m_drawingWidth;
     painter.fillRect( m_halfDrawOffset,
                       m_halfDrawOffset,
                       curPos,
-                      m_height,
+                      m_drawingHeight,
                       brush );
     painter.fillRect( curPos + m_halfDrawOffset + 1,
                       m_halfDrawOffset,
-                      m_width - curPos,
-                      m_height,
+                      m_drawingWidth - curPos,
+                      m_drawingHeight,
                       m_backgroundBrush );
     QColor color( brush.color() );
     color.setAlpha( m_mouseOver ? 220 : 150 );
     painter.setPen( Qt::NoPen );
     painter.setBrush( color );
     painter.setRenderHint( QPainter::Antialiasing );
-    int radius = ( m_height + m_drawOffset ) / 2;
+    int radius = m_height / 2;
     int xPos = int( curPos + m_halfDrawOffset );
-    xPos = xPos + radius > m_drawingWidth ? m_drawingWidth - radius
-                                          : ( xPos - radius < 0 ? radius
-                                                                : xPos );
+    xPos = xPos + radius > this->width() ? this->width() - radius
+                                         : ( xPos - radius < 0 ? radius
+                                                               : xPos );
     painter.drawEllipse( QPoint(  xPos,
-                                  int( m_drawOffset + m_height ) / 2 ),
+                                  int( m_drawOffset + m_drawingHeight ) / 2 ),
                          radius,
                          radius );
     color.setAlpha( 255 );
     painter.drawEllipse(
-                QPoint( xPos , int( m_drawOffset + m_height ) / 2 ),
+                QPoint( xPos , int( m_drawOffset + m_drawingHeight) / 2 ),
                 radius / 2,
                 radius / 2);
 
@@ -134,7 +140,7 @@ void SuperSlider::mousePressEvent( QMouseEvent *event )
     if( m_enabled )
     {
         int curPos = event->pos().x();
-        qint64 curValue = curPos * ( m_maxVal / m_width );
+        qint64 curValue = curPos * ( m_maxVal / m_drawingWidth );
         setCurrentValue( curValue );
         emit seeked( curValue );
         m_mouseOver = true;
@@ -149,10 +155,24 @@ void SuperSlider::mouseMoveEvent( QMouseEvent *event )
     if( event->buttons() == Qt::LeftButton ) {
         int xOffset = event->x() - m_mousePos.x();
         m_mousePos = event->pos();
-        qint64 curVal = m_curentVal + xOffset * int( m_maxVal / m_width );
+        qreal addn = ( xOffset * m_maxVal ) / m_drawingWidth;
+        int incr = addn > 0.5 ? 1 : addn < -0.5 ? -1 : 0;
+        qint64 curVal = m_curentVal + incr;
         setCurrentValue( curVal );
         emit seeked( m_curentVal );
         update();
+    }
+}
+
+
+void SuperSlider::wheelEvent( QWheelEvent *event )
+{
+    qreal addn = ( m_maxVal * event->delta()  ) / ( m_drawingWidth * 60 );
+    int incr = addn > 0.5 ? 1 : addn < -0.5 ? -1 : 0;
+    qint64 newVal = m_curentVal + incr;
+    if( newVal <= m_maxVal ) {
+        emit seeked( newVal );
+        setCurrentValue( newVal );
     }
 }
 
@@ -179,22 +199,22 @@ void SuperSlider::leaveEvent( QEvent *event )
 }
 
 
+void SuperSlider::resizeEvent( QResizeEvent *event )
+{
+//    setWidth( event->size().width() );
+    QWidget::resizeEvent( event );
+    m_drawingWidth = this->width() - m_drawOffset;
+    update();
+}
+
+
 
 QSize SuperSlider::sizeHint() const
 {
-    return QSize( m_drawingWidth, m_drawingHeight );
+    return QSize( 100, m_height );
 }
 
 
-void SuperSlider::wheelEvent( QWheelEvent *event )
-{
-    int delta = event->delta() / 60;
-    qint64 newVal = m_curentVal + ( m_maxVal / m_width ) * delta;
-    if( newVal <= m_maxVal ) {
-        emit seeked( newVal );
-        setCurrentValue( newVal );
-    }
-}
 
 
 void SuperSlider::setMaxValue( qint64 maxValue )

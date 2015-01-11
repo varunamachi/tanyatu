@@ -68,37 +68,31 @@ void ComponentManager::setupUi()
 {
     m_mainWidget = new QStackedWidget( this );
     m_buttonLayout = new QHBoxLayout();
-    QHBoxLayout *winlayout = new QHBoxLayout();
 
     QHBoxLayout *topLayout = new QHBoxLayout();
     m_buttonLayout->addStretch();
 
-    QPushButton *closeButton = new QPushButton(
-//                                                QIcon( ":/images/clear_act" ),
-                                                "X",
-                                                this );
-    closeButton->setFlat( true );
-    closeButton->setFixedSize( QSize( 20, 20 ));
-    closeButton->setToolTip( tr( "Exit" ));
-    closeButton->setContentsMargins( QMargins() );
+//    QHBoxLayout *winlayout = new QHBoxLayout();
+//    QPushButton *closeButton = new QPushButton( "X", this );
+//    closeButton->setFlat( true );
+//    closeButton->setFixedSize( QSize( 20, 20 ));
+//    closeButton->setToolTip( tr( "Exit" ));
+//    closeButton->setContentsMargins( QMargins() );
 
-    QPushButton *minimizeButton = new QPushButton(
-//                QIcon( ":/images/remove_act" ),
-                "--",
-                this );
-    minimizeButton->setFlat( true );
-    minimizeButton->setFixedSize( QSize( 24, 24 ));
-    minimizeButton->setToolTip( tr( "Exit" ));
-    minimizeButton->setContentsMargins( QMargins() );
+//    QPushButton *minimizeButton = new QPushButton( "--", this );
+//    minimizeButton->setFlat( true );
+//    minimizeButton->setFixedSize( QSize( 24, 24 ));
+//    minimizeButton->setToolTip( tr( "Exit" ));
+//    minimizeButton->setContentsMargins( QMargins() );
 
-    winlayout->addWidget( minimizeButton );
-    winlayout->addWidget( closeButton );
-    winlayout->setContentsMargins( QMargins() );
-    winlayout->setSpacing( 0 );
+//    winlayout->addWidget( minimizeButton );
+//    winlayout->addWidget( closeButton );
+//    winlayout->setContentsMargins( QMargins() );
+//    winlayout->setSpacing( 0 );
 
     topLayout->addLayout( m_buttonLayout );
     topLayout->addStretch();
-    topLayout->addLayout( winlayout );
+//    topLayout->addLayout( winlayout );
 
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
@@ -112,10 +106,10 @@ void ComponentManager::setupUi()
     m_buttonLayout->setSpacing( 5 );
     this->setLayout( mainLayout );
 
-    connect( closeButton, SIGNAL( released() ),
-             this, SIGNAL( exitRequested() ));
-    connect( minimizeButton, SIGNAL( released() ),
-             this, SIGNAL( minimizeReqested() ));
+//    connect( closeButton, SIGNAL( released() ),
+//             this, SIGNAL( exitRequested() ));
+//    connect( minimizeButton, SIGNAL( released() ),
+//             this, SIGNAL( minimizeReqested() ));
 }
 
 

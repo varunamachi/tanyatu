@@ -30,6 +30,8 @@
 #include <QThread>
 #include <QPaintEvent>
 #include <QMouseEvent>
+#include <QCoreApplication>
+#include <QApplication>
 
 
 #include <core/T.h>
@@ -62,39 +64,81 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
     this->setObjectName( "chillimain" );
 //    DATA_RETRIEVER()->getSavedPlayQueue( );
 //    PLAYQUEUE()->addItems( list );
-    QVBoxLayout *playerLayout = new QVBoxLayout();
+//    QVBoxLayout *playerLayout = new QVBoxLayout();
+//    m_audioPlayer = new AudioPlayerWidget( this );
+//    m_playlist = new PlaylistWidget( this );
+//    m_playlist->setContentsMargins( 2, 0, 0, 0 );
+//    playerLayout->addWidget( m_audioPlayer );
+//    playerLayout->addWidget( m_playlist );
+
+//    QHBoxLayout *compLayout = new QHBoxLayout();
+//    compLayout->addWidget( ComponentManager::get() );
+
+//    compLayout->setContentsMargins( QMargins() );
+//    compLayout->setSpacing( 0 );
+
+
+//    QVBoxLayout *leftLayout = new QVBoxLayout();
+//    leftLayout->addLayout( compLayout );
+
+//    leftLayout->setContentsMargins( QMargins() );
+//    leftLayout->setSpacing( 0 );
+//    m_leftWidget = new QWidget( this );
+//    m_leftWidget->setLayout( leftLayout );
+//    m_leftWidget->setContentsMargins( QMargins() );
+
+//    QHBoxLayout *mainLayout = new QHBoxLayout();
+//    mainLayout->addLayout( playerLayout );
+//    mainLayout->addWidget( m_leftWidget );
+//    mainLayout->setContentsMargins( QMargins() );
+//    mainLayout->setSpacing( 0 );
+//    this->setLayout( mainLayout );
+//    playerLayout->setContentsMargins( QMargins() );
+//    playerLayout->setSpacing( 0 );
+
+//    QHBoxLayout *winlayout = new QHBoxLayout();
+//    QPushButton *closeButton = new QPushButton( "X", this );
+//    closeButton->setFlat( true );
+//    closeButton->setFixedSize( QSize( 20, 20 ));
+//    closeButton->setToolTip( tr( "Exit" ));
+//    closeButton->setContentsMargins( QMargins() );
+
+//    QPushButton *minimizeButton = new QPushButton( "--", this );
+//    minimizeButton->setFlat( true );
+//    minimizeButton->setFixedSize( QSize( 24, 24 ));
+//    minimizeButton->setToolTip( tr( "Minimize" ));
+//    minimizeButton->setContentsMargins( QMargins() );
+
+//    winlayout->addWidget( minimizeButton );
+//    winlayout->addWidget( closeButton );
+//    winlayout->setContentsMargins( QMargins() );
+//    winlayout->setSpacing( 0 );
+
     m_audioPlayer = new AudioPlayerWidget( this );
     m_playlist = new PlaylistWidget( this );
-    m_playlist->setContentsMargins( 2, 0, 0, 0 );
-    playerLayout->addWidget( m_audioPlayer );
-    playerLayout->addWidget( m_playlist );
+    m_audioPlayer->setContentsMargins( QMargins( 2, 2, 2, 2 ));
+    m_playlist->setContentsMargins( QMargins( 2, 2, 2, 2 ));
+    ComponentManager::get()->setContentsMargins( QMargins( 2, 2, 2, 2 ));
 
-    QHBoxLayout *compLayout = new QHBoxLayout();
-    compLayout->addWidget( ComponentManager::get() );
+    QHBoxLayout *bottomLyt = new QHBoxLayout();
+    bottomLyt->addWidget( m_playlist );
+    bottomLyt->addWidget( ComponentManager::get() );
+    bottomLyt->setContentsMargins( QMargins() );
+    bottomLyt->setSpacing( 0 );
 
-    compLayout->setContentsMargins( QMargins() );
-    compLayout->setSpacing( 0 );
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget( m_audioPlayer );
+    layout->addLayout( bottomLyt );
+    layout->setContentsMargins( QMargins() );
+    layout->setSpacing( 0 );
+
+    this->setLayout( layout );
 
 
-    QVBoxLayout *leftLayout = new QVBoxLayout();
-    leftLayout->addLayout( compLayout );
-
-    leftLayout->setContentsMargins( QMargins() );
-    leftLayout->setSpacing( 0 );
-    m_leftWidget = new QWidget( this );
-    m_leftWidget->setLayout( leftLayout );
-    m_leftWidget->setContentsMargins( QMargins() );
-
-    QHBoxLayout *mainLayout = new QHBoxLayout();
-    mainLayout->addLayout( playerLayout );
-    mainLayout->addWidget( m_leftWidget );
-    mainLayout->setContentsMargins( QMargins() );
-    mainLayout->setSpacing( 0 );
     QString css = createStyleSheet();
     ComponentManager::get()->setStyleSheet( css );
     m_playlist->setStyleSheet( css );
-    playerLayout->setContentsMargins( QMargins() );
-    playerLayout->setSpacing( 0 );
+
 
     connect( m_audioPlayer, SIGNAL( urlsDropped( QList< QUrl > )),
              m_playlist, SLOT( addUrls( QList< QUrl > )));
@@ -104,7 +148,6 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
              SIGNAL( aboutToQuit() ),
              this,
              SLOT( onAboutToQuit() ));
-    this->setLayout( mainLayout );
 
 
 }

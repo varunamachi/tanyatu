@@ -67,6 +67,7 @@ public slots:
         }
         this->setIconSize( size );
         this->resize( size );
+        this->setFixedSize( size );
     }
 
 
@@ -95,6 +96,7 @@ protected:
         QPixmap pixmap = this->icon().pixmap( this->iconSize(),
                                               isEnabled() ? QIcon::Normal :
                                                             QIcon::Disabled );
+//        painter.fillRect( this->rect(), Qt::lightGray );
         painter.drawPixmap( 0,
                             0,
                             this->iconSize().width(),
