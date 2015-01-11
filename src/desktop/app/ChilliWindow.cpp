@@ -96,25 +96,36 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
 //    playerLayout->setContentsMargins( QMargins() );
 //    playerLayout->setSpacing( 0 );
 
-//    QHBoxLayout *winlayout = new QHBoxLayout();
-//    QPushButton *closeButton = new QPushButton( "X", this );
-//    closeButton->setFlat( true );
-//    closeButton->setFixedSize( QSize( 20, 20 ));
-//    closeButton->setToolTip( tr( "Exit" ));
-//    closeButton->setContentsMargins( QMargins() );
-
-//    QPushButton *minimizeButton = new QPushButton( "--", this );
-//    minimizeButton->setFlat( true );
-//    minimizeButton->setFixedSize( QSize( 24, 24 ));
-//    minimizeButton->setToolTip( tr( "Minimize" ));
-//    minimizeButton->setContentsMargins( QMargins() );
-
-//    winlayout->addWidget( minimizeButton );
-//    winlayout->addWidget( closeButton );
-//    winlayout->setContentsMargins( QMargins() );
-//    winlayout->setSpacing( 0 );
-
+    QHBoxLayout *topLayout = new QHBoxLayout();
     m_audioPlayer = new AudioPlayerWidget( this );
+
+    QPushButton *closeButton = new QPushButton( "X", this );
+    closeButton->setFlat( true );
+    closeButton->setFixedSize( QSize( 20, 20 ));
+    closeButton->setToolTip( tr( "Exit" ));
+    closeButton->setContentsMargins( QMargins() );
+
+    QPushButton *minimizeButton = new QPushButton( "--", this );
+    minimizeButton->setFlat( true );
+    minimizeButton->setFixedSize( QSize( 20, 20 ));
+    minimizeButton->setToolTip( tr( "Minimize" ));
+    minimizeButton->setContentsMargins( QMargins() );
+
+    connect( minimizeButton,
+             SIGNAL( clicked() ),
+             this,
+             SIGNAL( minimize() ));
+    connect( closeButton,
+             SIGNAL( clicked() ),
+             this,
+             SIGNAL( exit() ));
+
+    topLayout->addWidget( m_audioPlayer );
+    topLayout->addWidget( minimizeButton );
+    topLayout->addWidget( closeButton );
+    topLayout->setContentsMargins( QMargins() );
+    topLayout->setSpacing( 0 );
+
     m_playlist = new PlaylistWidget( this );
     m_audioPlayer->setContentsMargins( QMargins( 2, 2, 2, 2 ));
     m_playlist->setContentsMargins( QMargins( 2, 2, 2, 2 ));
@@ -127,7 +138,7 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
     bottomLyt->setSpacing( 0 );
 
     QVBoxLayout *layout = new QVBoxLayout();
-    layout->addWidget( m_audioPlayer );
+    layout->addLayout( topLayout );
     layout->addLayout( bottomLyt );
     layout->setContentsMargins( QMargins() );
     layout->setSpacing( 0 );
@@ -295,14 +306,10 @@ ChilliWindow::ChilliWindow( QWidget *parent )
     effect->setDistance( 3.0 );
     effect->setColor( QColor( 0xA0, 0x52, 0x2D, 0x80 ));
     m_chilliWidget->setGraphicsEffect( effect );
-    connect( ComponentManager::get(),
-             SIGNAL( exitRequested() ),
+    connect( m_chilliWidget,
+             SIGNAL( exit() ),
              QApplication::instance(),
              SLOT( quit() ));
-    connect( ComponentManager::get(),
-             SIGNAL( minimizeReqested()) ,
-             this,
-             SLOT( onMinimize() ));
     connect( m_chilliWidget,
              SIGNAL( minimize() ),
              this,

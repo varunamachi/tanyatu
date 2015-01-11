@@ -58,6 +58,8 @@ signals:
 
     void restore();
 
+    void exit();
+
 protected:
     void paintEvent( QPaintEvent *event );
 

@@ -164,6 +164,7 @@ void AudioPlayerWidget::setupUi()
     QPalette pal = this->palette();
     this->setAutoFillBackground( true );
 //    pal.setBrush( QPalette::Window, QBrush( QImage( ":/images/background" )));
+    pal.setBrush( QPalette::Window, Qt::black );
     this->setPalette( pal );
     this->setAcceptDrops( true );
 
