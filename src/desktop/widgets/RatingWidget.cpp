@@ -52,7 +52,7 @@ RatingWidget::~RatingWidget()
 
 QSize RatingWidget::sizeHint() const
 {
-    return QSize( m_numValues * m_unsetIcon->width(), m_unsetIcon->height() );
+    return QSize( m_numValues * m_setIcon->width(), m_setIcon->height() );
 }
 
 
@@ -85,7 +85,7 @@ void RatingWidget::paintEvent( QPaintEvent *event )
             pxPaint.drawPixmap( i * m_setIcon->width(), 0, *m_setIcon );
         }
         else {
-            pxPaint.drawPixmap( i * m_unsetIcon->width(), 0, *m_unsetIcon );
+            pxPaint.drawPixmap( i * m_setIcon->width(), 0, *m_unsetIcon );
         }
     }
 }

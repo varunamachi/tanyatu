@@ -196,14 +196,15 @@ QString ChilliMainWidget::createStyleSheet()
         "QTreeView::item:selected:active, QTreeView::item:selected:!active,"
         "QListView::item:selected:active, QListView::item:selected:!active{"
             "color: #151515; "
-            "background-color: rgba( 255, 168, 48, 200 );"
+//            "background-color: rgba( 255, 168, 48, 200 );"
+            "background-color: #B2936C;"
         "}"
         "QHeaderView::section {"
             "background-color: #202020;"
             "color: white;"
         "}"
         "QTreeView::item:hover, QListView::item:hover { "
-            "background-color: rgba( 255, 168, 48, 130 );"
+            "background-color: rgba( 255, 168, 48, 50 );"
         "}"
         "QProgressBar{ "
             "border-radius: 5px;"
@@ -215,7 +216,13 @@ QString ChilliMainWidget::createStyleSheet()
         "}"
         "QLineEdit{ background-color: #444444;}"
         "QMenu{ background-color: #444444;}"
-        "QMenu::item:selected{background-color: #696969; }";
+        "QMenu::item:selected{background-color: #696969; }"
+/*         "QHeaderView::section {"
+         "   background-color: black;"
+         "   color: white;"
+         "   padding-left: 4px;"
+         "   border: 1px solid #6c6c6c;"
+         "}"*/;
 }
 
 

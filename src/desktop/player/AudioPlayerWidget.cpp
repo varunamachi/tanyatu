@@ -50,7 +50,7 @@ AudioPlayerWidget::AudioPlayerWidget(QWidget *parent) :
 void AudioPlayerWidget::setupUi()
 {
     m_scroller      = new GreenChilli::Widgets::TextScroller(
-                                QColor( 0x10, 0x10, 0x10 ),
+                                QColor( 0x8, 0x8, 0x8 ),
                                 QColor( 255, 168, 88 ),
                                 this );
     m_seekSlider    = new GreenChilli::Widgets::SuperSlider( this );
@@ -109,7 +109,7 @@ void AudioPlayerWidget::setupUi()
     auto lytSeeker = new QHBoxLayout();
     lytSeeker->addWidget( m_seekSlider );
     lytSeeker->addWidget( m_elapsedTime );
-    lytSeeker->addWidget( new QLabel( " | " ));
+    lytSeeker->addWidget( new QLabel( "|" ));
     lytSeeker->addWidget( m_totalTime );
     m_seekSlider->setWidth( 200 );
     m_seekSlider->setHeight( 20 );
@@ -143,18 +143,25 @@ void AudioPlayerWidget::setupUi()
 
     QWidget *middle = new QWidget( this );
     middle->setLayout( lytMiddle );
-    middle->setStyleSheet( "border-radius: 5px;"
-                           "background-color: #101010;" );
+//    middle->setStyleSheet( "border-radius: 5px;"
+//                           "background-color: #101010;" );
 //    middle->setContentsMargins( QMargins() );
+    middle->setStyleSheet( "border-radius: 5px;"
+                           "background-color: qlineargradient(spread:pad, x1:1, y1:0.205, x2:1, y2:0.949, stop:0.895288 rgba(10, 10, 10, 255), stop:1 rgba(0, 0, 0, 255));" );
+    middle->setContentsMargins( QMargins() );
 
 
 
-    QPushButton *closeButton = new QPushButton( "X", this );
+    QPushButton *closeButton = new QPushButton( QIcon( ":/images/ex" ),
+                                                "",
+                                                this );
     closeButton->setFlat( true );
     closeButton->setToolTip( tr( "Exit" ));
     closeButton->setContentsMargins( QMargins() );
 
-    QPushButton *minimizeButton = new QPushButton( "--", this );
+    QPushButton *minimizeButton = new QPushButton( QIcon( ":/images/minus" ),
+                                                   "",
+                                                   this );
     minimizeButton->setFlat( true );
     minimizeButton->setToolTip( tr( "Minimize" ));
     minimizeButton->setContentsMargins( QMargins() );
@@ -237,17 +244,27 @@ void AudioPlayerWidget::setupUi()
 //    this->setPalette( pal );
     this->setAcceptDrops( true );
     setScrollingText();
-    this->setFixedHeight( 70 );
+    this->setFixedHeight( 60 );
 
-    QString labelCss =
-            "QLabel {"
-            "   color: gray;"
-            "   font-size: 7px;"
-            "   font: monospace;"
-            "}";
-    m_sampleFreq->setStyleSheet( labelCss );
-    m_bitrate->setStyleSheet( labelCss );
-    m_format->setStyleSheet( labelCss );
+    QString infoLabelCss =
+                           "QLabel {"
+                           "   color: gray;"
+                           "   background-color: rgba( 0,0,0,0 );"
+                           "   font-size: 7px;"
+                           "   font: monospace;"
+                           "}";
+    m_sampleFreq->setStyleSheet( infoLabelCss );
+    m_bitrate->setStyleSheet( infoLabelCss );
+    m_format->setStyleSheet( infoLabelCss );
+
+    QString timeLabelCss = "QLabel {"
+                           "   font-size: 9px;"
+                           "   background-color: rgba( 0,0,0,0 );"
+                           "   font: monospace;"
+                           "}";
+    m_elapsedTime->setStyleSheet( timeLabelCss );
+    m_totalTime->setStyleSheet( timeLabelCss );
+    m_volumeLable->setStyleSheet( timeLabelCss );
 }
 
 

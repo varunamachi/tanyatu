@@ -53,10 +53,10 @@ void RatingDelegate::paint( QPainter *painter,
         painter->save();
         int rating = index.data().toInt();
         if( option.state & QStyle::State_Selected ) {
-            painter->fillRect( option.rect, QColor( 0xFF, 0xA8, 0x58, 200 ));
+            painter->fillRect( option.rect, QColor( 0xB2, 0x93, 0x6C ));
         }
         else if( option.state & QStyle::State_MouseOver ) {
-            painter->fillRect( option.rect, QColor( 0xFF, 0xA8, 0x58, 130 ));
+            painter->fillRect( option.rect, QColor( 255, 168, 48, 50 ));
         }
         for( int i = 0; i < 5; ++i ) {
             if( i < rating ) {

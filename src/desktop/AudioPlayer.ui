@@ -14,7 +14,9 @@
    <string>GreenChilli</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget{
+   <string notr="true">background-color: qlineargradient(spread:pad, x1:1, y1:0.205, x2:1, y2:0.949, stop:0.895288 rgba(10, 10, 10, 255), stop:1 rgba(0, 0, 0, 255));
+
+QWidget{
             background-color: black; 
             color: #FFA858;
             border-color: black;
@@ -269,8 +271,7 @@ color: rgb(255, 170, 0);</string>
     <string>Stop</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">
-</string>
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>

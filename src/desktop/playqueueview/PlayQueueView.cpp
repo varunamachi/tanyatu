@@ -88,6 +88,7 @@ void PlaylistWidget::setupUi() {
     m_view->setColumnWidth( 2, 16 );
     m_view->header()->setStretchLastSection( false );
     m_view->hideColumn( 0 );
+    m_view->header()->setVisible( false );
 
     QVBoxLayout* mainLayout = new QVBoxLayout( this );
     mainLayout->addWidget( m_view );

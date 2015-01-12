@@ -35,6 +35,9 @@
         <file alias="nothot">resources/nothot.png</file>
         <file alias="star_filled">resources/star_filled.png</file>
         <file alias="star_unfilled">resources/star_unfilled.png</file>
+        <file alias="ex">resources/ex.png</file>
+        <file alias="minus">resources/minus.png</file>
+        <file alias="norating">resources/norating.png</file>
     </qresource>
     <qresource prefix="/">
         <file>QMLPlayer.qml</file>

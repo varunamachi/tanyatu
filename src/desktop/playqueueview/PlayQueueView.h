@@ -54,7 +54,7 @@ public:
     {
         if( role == Qt::BackgroundColorRole ) {
             if( PLAYQUEUE()->currentIndex() == index.row() ) {
-                return QColor( Qt::red );
+                return QColor( 0xB2, 0x6B, 0x00 );
             }
         }
         return Tanyatu::Ui::MediaItemModel::data( index, role );
