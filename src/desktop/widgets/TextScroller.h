@@ -35,12 +35,12 @@ public:
         Bounce
     };
 
-    TextScroller( QWidget *parent = 0 );
+    TextScroller( QColor bgColor, QColor fgColor, QWidget *parent = 0 );
 
     void setParameters( ScrollEffect effect,
-                  int displayLength,
-                  int displayHeight,
-                  int xOffset );
+                        int displayLength,
+                        int displayHeight,
+                        int xOffset );
 
     ~TextScroller();
 
@@ -53,12 +53,6 @@ public slots:
 
 protected:
     void paintEvent( QPaintEvent *event );
-
-    void mouseMoveEvent( QMouseEvent *event );
-
-    void mousePressEvent( QMouseEvent *event );
-
-    void mouseReleaseEvent( QMouseEvent *event );
 
     void resizeEvent( QResizeEvent *event );
 
@@ -91,8 +85,6 @@ private:
 
     qreal m_pixelFactor;
 
-    QColor m_textColor;
-
     Progression m_progression;
 
     QPixmap *m_fullPixmap;
@@ -104,6 +96,10 @@ private:
     int m_startIndex;
 
     int m_imageWidth;
+
+    QColor m_bgColor;
+
+    QColor m_fgColor;
 };
 
 } }

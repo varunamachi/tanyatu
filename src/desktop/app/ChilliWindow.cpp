@@ -62,69 +62,9 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
 {
 
     this->setObjectName( "chillimain" );
-//    DATA_RETRIEVER()->getSavedPlayQueue( );
-//    PLAYQUEUE()->addItems( list );
-//    QVBoxLayout *playerLayout = new QVBoxLayout();
-//    m_audioPlayer = new AudioPlayerWidget( this );
-//    m_playlist = new PlaylistWidget( this );
-//    m_playlist->setContentsMargins( 2, 0, 0, 0 );
-//    playerLayout->addWidget( m_audioPlayer );
-//    playerLayout->addWidget( m_playlist );
-
-//    QHBoxLayout *compLayout = new QHBoxLayout();
-//    compLayout->addWidget( ComponentManager::get() );
-
-//    compLayout->setContentsMargins( QMargins() );
-//    compLayout->setSpacing( 0 );
-
-
-//    QVBoxLayout *leftLayout = new QVBoxLayout();
-//    leftLayout->addLayout( compLayout );
-
-//    leftLayout->setContentsMargins( QMargins() );
-//    leftLayout->setSpacing( 0 );
-//    m_leftWidget = new QWidget( this );
-//    m_leftWidget->setLayout( leftLayout );
-//    m_leftWidget->setContentsMargins( QMargins() );
-
-//    QHBoxLayout *mainLayout = new QHBoxLayout();
-//    mainLayout->addLayout( playerLayout );
-//    mainLayout->addWidget( m_leftWidget );
-//    mainLayout->setContentsMargins( QMargins() );
-//    mainLayout->setSpacing( 0 );
-//    this->setLayout( mainLayout );
-//    playerLayout->setContentsMargins( QMargins() );
-//    playerLayout->setSpacing( 0 );
 
     QHBoxLayout *topLayout = new QHBoxLayout();
     m_audioPlayer = new AudioPlayerWidget( this );
-
-    QPushButton *closeButton = new QPushButton( "X", this );
-    closeButton->setFlat( true );
-    closeButton->setFixedSize( QSize( 20, 20 ));
-    closeButton->setToolTip( tr( "Exit" ));
-    closeButton->setContentsMargins( QMargins() );
-
-    QPushButton *minimizeButton = new QPushButton( "--", this );
-    minimizeButton->setFlat( true );
-    minimizeButton->setFixedSize( QSize( 20, 20 ));
-    minimizeButton->setToolTip( tr( "Minimize" ));
-    minimizeButton->setContentsMargins( QMargins() );
-
-    connect( minimizeButton,
-             SIGNAL( clicked() ),
-             this,
-             SIGNAL( minimize() ));
-    connect( closeButton,
-             SIGNAL( clicked() ),
-             this,
-             SIGNAL( exit() ));
-
-    topLayout->addWidget( m_audioPlayer );
-    topLayout->addWidget( minimizeButton );
-    topLayout->addWidget( closeButton );
-    topLayout->setContentsMargins( QMargins() );
-    topLayout->setSpacing( 0 );
 
     m_playlist = new PlaylistWidget( this );
     m_audioPlayer->setContentsMargins( QMargins( 2, 2, 2, 2 ));
@@ -137,8 +77,8 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
     bottomLyt->setContentsMargins( QMargins() );
     bottomLyt->setSpacing( 0 );
 
-    QVBoxLayout *layout = new QVBoxLayout();
-    layout->addLayout( topLayout );
+    auto *layout = new QVBoxLayout();
+    layout->addWidget( m_audioPlayer );
     layout->addLayout( bottomLyt );
     layout->setContentsMargins( QMargins() );
     layout->setSpacing( 0 );
@@ -149,7 +89,7 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
     QString css = createStyleSheet();
     ComponentManager::get()->setStyleSheet( css );
     m_playlist->setStyleSheet( css );
-
+    m_audioPlayer->setStyleSheet( css );
 
     connect( m_audioPlayer, SIGNAL( urlsDropped( QList< QUrl > )),
              m_playlist, SLOT( addUrls( QList< QUrl > )));
@@ -159,8 +99,6 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
              SIGNAL( aboutToQuit() ),
              this,
              SLOT( onAboutToQuit() ));
-
-
 }
 
 
@@ -178,7 +116,7 @@ void ChilliMainWidget::onAboutToQuit()
 }
 
 
-void ChilliMainWidget::paintEvent( QPaintEvent *event )
+void ChilliMainWidget::paintEvent( QPaintEvent */*event*/ )
 {
     QPainter painter( this );
     if( m_roundedRect ) {
@@ -210,10 +148,16 @@ QString ChilliMainWidget::createStyleSheet()
             "border-color: black;"
         "}"
         "QPushButton:pressed{"
-              "background-color: #FFA858; "
-              "color: white;"
-              "border-width: 8px;"
-              "border-color: black;"
+           "background-color: #FFA858; "
+           "color: white;"
+           "border-width: 8px;"
+           "border-color: black;"
+        "}"
+        "QLabel{"
+           "color: #FFA858; "
+           "border-width: 8px;"
+           "border-color: black;"
+           "font: monospace;"
         "}"
         "QPushButton:checked{"
            "background-color: #FFA858; "
@@ -282,12 +226,6 @@ ChilliWindow::ChilliWindow( QWidget *parent )
 {
     this->setWindowFlags( Qt::FramelessWindowHint
                           | Qt::WindowMinimizeButtonHint );
-//    m_sizeGrip = new QSizeGrip( this );
-//    m_sizeGrip->setFixedSize( 6, 6 );
-//    m_sizeGrip->setGeometry( m_chilliWidget->width() - 6, m_chilliWidget->height() - 6, 6, 6 );
-//    m_sizeGrip->setStyleSheet( "background-color: yellow;");
-//    m_sizeGrip->setToolTip( tr( "Drag to resize the window" ));
-//    m_sizeGrip->setContentsMargins( QMargins() );
     m_containerWidget = new QWidget( this );
     m_containerWidget->setContentsMargins( 5, 5, 5, 5 );
 
@@ -306,11 +244,11 @@ ChilliWindow::ChilliWindow( QWidget *parent )
     effect->setDistance( 3.0 );
     effect->setColor( QColor( 0xA0, 0x52, 0x2D, 0x80 ));
     m_chilliWidget->setGraphicsEffect( effect );
-    connect( m_chilliWidget,
+    connect( m_chilliWidget->m_audioPlayer,
              SIGNAL( exit() ),
              QApplication::instance(),
              SLOT( quit() ));
-    connect( m_chilliWidget,
+    connect( m_chilliWidget->m_audioPlayer,
              SIGNAL( minimize() ),
              this,
              SLOT( onMinimize() ));
@@ -387,11 +325,7 @@ void ChilliWindow::showEvent( QShowEvent *evt )
 
 void ChilliWindow::resizeEvent( QResizeEvent *evt )
 {
-//    Q_UNUSED( evt )
-//    m_sizeGrip->setGeometry( this->width() - 8,
-//                             this->height() - 8,
-//                             6,
-//                             6 );
+
 }
 
 

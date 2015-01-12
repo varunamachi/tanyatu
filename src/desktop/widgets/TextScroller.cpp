@@ -31,13 +31,18 @@
 
 namespace GreenChilli { namespace Widgets {
 
-TextScroller::TextScroller( QWidget *parent )
-    : QWidget( parent ),
-      m_progression( Progression::Forward ),
-      m_forceAnimate( false ),
-      m_notAnimating( true ),
-      m_mouseXPress( -1 ),
-      m_pixelFactor( 1.0 )
+TextScroller::TextScroller( QColor bgColor,
+                            QColor fgColor,
+                            QWidget *parent )
+    : QWidget( parent )
+    , m_progression( Progression::Forward )
+    , m_forceAnimate( false )
+    , m_notAnimating( true )
+    , m_mouseXPress( -1 )
+    , m_pixelFactor( 1.0 )
+    , m_bgColor( bgColor )
+    , m_fgColor( fgColor )
+
 {
     this->setSizePolicy( QSizePolicy::Expanding,
                          QSizePolicy::Expanding );
@@ -45,8 +50,8 @@ TextScroller::TextScroller( QWidget *parent )
     m_fullPixmap = new QPixmap(  );
     m_currentPixmap = new QPixmap( m_displayLength, m_displayHeight );
     m_timer = new QTimer( this );
-    m_timer->setInterval( 40 );
-    m_textColor = QColor( 255, 168, 88 );
+    m_timer->setInterval( 400 );
+//    m_textColor = QColor( 255, 168, 88 );
     connect( m_timer, SIGNAL( timeout() ),
              this, SLOT( onTimeOut() ));
     processText( " **** " );
@@ -112,18 +117,16 @@ void TextScroller::preparePixmap()
 {
     delete m_currentPixmap;
     m_currentPixmap = new QPixmap( m_displayLength, m_displayHeight );
-    m_currentPixmap->fill( QColor( 0, 0, 0, 0 ));
+    m_currentPixmap->fill( m_bgColor );
     QPainter painter( m_currentPixmap );
     if(( m_imageWidth - m_xOffset * 2 ) < m_displayLength && ! m_forceAnimate )
     {
         int padding = ( m_displayLength - m_imageWidth ) / 2;
-        QPixmap actualPixmap = m_fullPixmap->copy( 0, 0,
-                                               m_imageWidth, m_displayHeight);
         painter.drawPixmap( padding,
                             0,
                             m_imageWidth,
                             m_displayHeight,
-                            actualPixmap );
+                            *m_fullPixmap );
         m_notAnimating = true;
     }
     else if( m_effect == ScrollEffect::Revolve )
@@ -196,46 +199,24 @@ void TextScroller::processText( QString text ) {
 
     m_fullPixmap = new QPixmap( m_imageWidth,
                                 m_displayHeight );
-    m_fullPixmap->fill( qRgba( 0, 0, 0, 0  ));
+    m_fullPixmap->fill( m_bgColor );
     QPainter pxPainter( m_fullPixmap );
     pxPainter.setFont( font );
     pxPainter.setRenderHint( QPainter::Antialiasing, true );
     pxPainter.setRenderHint(QPainter::HighQualityAntialiasing);
-    pxPainter.setPen( m_textColor );
+    pxPainter.setPen( m_fgColor );
     pxPainter.drawText( m_xOffset, metric.height(), text);
 
 
     m_progression = Progression::Forward;
+    update();
 }
 
-
-void TextScroller::mouseMoveEvent( QMouseEvent *event )
-{
-//    if( ! m_notAnimating && m_mouseXPress != -1 )
-//    {
-//        m_startIndex +=  - ( event->x() - m_mouseXPress );
-//        onTimeOut();
-//    }
-    event->ignore();
-}
-
-void TextScroller::mousePressEvent(QMouseEvent *event)
-{
-    m_timer->stop();
-    m_mouseXPress = event->x();
-}
-
-void TextScroller::mouseReleaseEvent(QMouseEvent *event)
-{
-    Q_UNUSED( event )
-    m_timer->start();
-    m_mouseXPress = -1;
-}
 
 void TextScroller::resizeEvent( QResizeEvent *event )
 {
     m_displayLength = event->size().width();
-//    preparePixmap();
+    preparePixmap();
 }
 
 } }

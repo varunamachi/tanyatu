@@ -20,26 +20,22 @@
  * SOFTWARE.
  ******************************************************************************/
 
-#include <QVBoxLayout>
 #include <QString>
 #include <QFileInfo>
 #include <QLabel>
 #include <QDropEvent>
 #include <QMimeData>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <core/T.h>
 #include <core/data/AudioTrack.h>
 #include <core/coreutils/Utils.h>
 
-#include  "ui_AudioPlayer.h"
 #include "AudioPlayerWidget.h"
 
-#define NO_MARGINS( layout ) \
-    layout->setContentsMargins( QMargins() ); \
 
-
-using namespace GreenChilli;
-
+namespace GreenChilli {
 
 AudioPlayerWidget::AudioPlayerWidget(QWidget *parent) :
     QWidget(parent),
@@ -53,7 +49,10 @@ AudioPlayerWidget::AudioPlayerWidget(QWidget *parent) :
 
 void AudioPlayerWidget::setupUi()
 {
-    m_scroller      = new GreenChilli::Widgets::TextScroller( this );
+    m_scroller      = new GreenChilli::Widgets::TextScroller(
+                                QColor( 0x10, 0x10, 0x10 ),
+                                QColor( 255, 168, 88 ),
+                                this );
     m_seekSlider    = new GreenChilli::Widgets::SuperSlider( this );
 
     m_prevButton    = new GreenChilli::Widgets::ImagePushButton( this );
@@ -69,10 +68,10 @@ void AudioPlayerWidget::setupUi()
     m_volumeSlider  = new GreenChilli::Widgets::SuperSlider();
 
     m_elapsedTime   = new QLabel( "--:--" );
-    m_remainingTime = new QLabel( "--:--" );
-    m_bitrate       = new QLabel( "--- kbps" );
-    m_sampleFreq    = new QLabel( "-- Hz" );
-    m_format        = new QLabel( "****" );
+    m_totalTime = new QLabel( "--:--" );
+    m_bitrate       = new QLabel( "    " );
+    m_sampleFreq    = new QLabel( "    " );
+    m_format        = new QLabel( "    " );
 
     m_muteButton->setIcons( QIcon( ":/images/muteoff" ),
                             QIcon( ":/images/muteon" ),
@@ -90,43 +89,114 @@ void AudioPlayerWidget::setupUi()
                             QIcon( ":/images/next_act" ),
                             QSize( 32, 32 ));
 
-    QHBoxLayout *lytPlayCtrl = new QHBoxLayout();
+    auto lytPlayCtrl = new QHBoxLayout();
     lytPlayCtrl->addWidget( m_prevButton );
     lytPlayCtrl->addWidget( m_stopButton );
     lytPlayCtrl->addWidget( m_playButton );
     lytPlayCtrl->addWidget( m_nextButton );
 
-    QHBoxLayout *lytVolume = new QHBoxLayout();
+    auto lytVolume = new QHBoxLayout();
     lytVolume->addWidget( m_muteButton );
     lytVolume->addWidget( m_volumeSlider );
     lytVolume->addWidget( m_volumeLable );
     lytVolume->setSpacing( 2 );
 //    volumeSlider->setHeight( 19 );
     m_muteButton->setCheckable( true );
-    QWidget *volWidget = new QWidget( this );
+    auto volWidget = new QWidget( this );
     volWidget->setLayout( lytVolume );
     volWidget->setMaximumWidth( 140 );
 
-    QHBoxLayout *lytSeeker = new QHBoxLayout();
-    lytSeeker->addWidget( m_elapsedTime );
+    auto lytSeeker = new QHBoxLayout();
     lytSeeker->addWidget( m_seekSlider );
-    lytSeeker->addWidget( m_remainingTime );
+    lytSeeker->addWidget( m_elapsedTime );
+    lytSeeker->addWidget( new QLabel( " | " ));
+    lytSeeker->addWidget( m_totalTime );
     m_seekSlider->setWidth( 200 );
+    m_seekSlider->setHeight( 20 );
 
-    QVBoxLayout *lytScrollerSeeker = new QVBoxLayout();
+
+    auto lytInfo = new QVBoxLayout();
+    lytInfo->addWidget( m_bitrate );
+    lytInfo->addWidget( m_sampleFreq );
+    lytInfo->addWidget( m_format );
+    lytInfo->addStretch();
+    lytInfo->setSpacing( 1 );
+    lytInfo->setContentsMargins( QMargins() );
+
+    auto lytScrollerSeeker = new QHBoxLayout();
     lytScrollerSeeker->addWidget( m_scroller );
-    lytScrollerSeeker->addLayout( lytSeeker );
+    lytScrollerSeeker->addLayout( lytInfo );
     lytScrollerSeeker->setSpacing( 0 );
     m_scroller->setScrollText( " G R E E N C H I L L I ", true );
     m_scroller->setParameters( Widgets::TextScroller::ScrollEffect::Bounce,
-                             100,
-                             32,
-                             0 );
+                               100,
+                               34,
+                               0 );
+    lytScrollerSeeker->setContentsMargins( QMargins() );
 
-    QVBoxLayout *lytRepShfl = new QVBoxLayout();
+
+    auto lytMiddle = new QVBoxLayout();
+    lytMiddle->addLayout( lytScrollerSeeker );
+    lytMiddle->addLayout( lytSeeker );
+    lytMiddle->setContentsMargins( QMargins( 5, 5, 2, 5 ));
+//    lytMiddle->setSpacing( 0 );
+
+    QWidget *middle = new QWidget( this );
+    middle->setLayout( lytMiddle );
+    middle->setStyleSheet( "border-radius: 5px;"
+                           "background-color: #101010;" );
+//    middle->setContentsMargins( QMargins() );
+
+
+
+    QPushButton *closeButton = new QPushButton( "X", this );
+    closeButton->setFlat( true );
+    closeButton->setToolTip( tr( "Exit" ));
+    closeButton->setContentsMargins( QMargins() );
+
+    QPushButton *minimizeButton = new QPushButton( "--", this );
+    minimizeButton->setFlat( true );
+    minimizeButton->setToolTip( tr( "Minimize" ));
+    minimizeButton->setContentsMargins( QMargins() );
+
+    QString winButtonCss = " QPushButton {"
+                           "     border-radius: 5px;"
+                           "     max-width: 32px;"
+                           "     max-height:32px;"
+                           "     min-width: 32px;"
+                           "     min-height: 32px;"
+                           "     font-size: 14px;"
+                           "     background-color: black;"
+                           " }"
+                           " QPushButton:checked {"
+                           "     background-color: #FFA858;"
+                           "     color: #202020;"
+                           " }"
+                           " QPushButton:hover{"
+                           "     background-color: #FFA858;"
+                           "     color: red;"
+                           " }";
+    minimizeButton->setStyleSheet( winButtonCss );
+    closeButton->setStyleSheet( winButtonCss );
+    connect( minimizeButton,
+             SIGNAL( clicked() ),
+             this,
+             SIGNAL( minimize() ));
+    connect( closeButton,
+             SIGNAL( clicked() ),
+             this,
+             SIGNAL( exit() ));
+
+
+    auto lytWin = new QHBoxLayout();
+    lytWin->addWidget( minimizeButton );
+    lytWin->addWidget( closeButton );
+
+    auto lytRepShfl = new QHBoxLayout();
     lytRepShfl->addWidget( m_repeatButton );
     lytRepShfl->addWidget( m_shuffleButton );
     m_shuffleButton->setCheckable( true );
+    m_repeatButton->setCheckable( true );
     QString stylesheet =  " QPushButton {"
                           "     border-radius: 5px;"
                           "     background-color: regba( 32, 32, 32, 200 );"
@@ -147,30 +217,37 @@ void AudioPlayerWidget::setupUi()
     m_shuffleButton->setStyleSheet( stylesheet );
     m_repeatButton->setStyleSheet( stylesheet );
 
+    auto lytRight = new QVBoxLayout();
+    lytRight->addLayout( lytWin );
+    lytRight->addLayout( lytRepShfl );
 
-    QHBoxLayout *lytMaster = new QHBoxLayout();
+    auto lytMaster = new QHBoxLayout();
     lytMaster->addLayout( lytPlayCtrl );
-//    lytMaster->addLayout( lytVolume );
     lytMaster->addWidget( volWidget );
-    lytMaster->addLayout( lytScrollerSeeker );
-    lytMaster->addLayout( lytRepShfl );
+    lytMaster->addWidget( middle );
+    lytMaster->addLayout( lytRight );
     this->setLayout( lytMaster );
-    NO_MARGINS( lytMaster );
+    lytMaster->setContentsMargins( QMargins( 0, 0, 0, 4 ));
 
-    m_bitrate    ->hide();
-    m_sampleFreq ->hide();
-    m_format     ->hide();
-
-    QPalette pal = this->palette();
-    this->setAutoFillBackground( true );
+//    QPalette pal = this->palette();
+//    this->setAutoFillBackground( true );
 //    pal.setBrush( QPalette::Window, QBrush( QImage( ":/images/background" )));
-    pal.setBrush( QPalette::Window, Qt::black );
-    this->setPalette( pal );
+//    pal.setBrush( QPalette::Window, Qt::black );
+//    pal.setBrush( QPalette::Window, Qt::black );
+//    this->setPalette( pal );
     this->setAcceptDrops( true );
-
     setScrollingText();
+    this->setFixedHeight( 70 );
 
-    this->setFixedHeight( 48 );
+    QString labelCss =
+            "QLabel {"
+            "   color: gray;"
+            "   font-size: 7px;"
+            "   font: monospace;"
+            "}";
+    m_sampleFreq->setStyleSheet( labelCss );
+    m_bitrate->setStyleSheet( labelCss );
+    m_format->setStyleSheet( labelCss );
 }
 
 
@@ -332,18 +409,21 @@ void AudioPlayerWidget::onRepeatButtonClicked()
         PLAYQUEUE()->setRepeat(
                     Tanyatu::IPlayQueue::RepeatType_RepeatAll );
         m_repeatButton->setText( tr( "OFF" ));
+        m_repeatButton->setChecked( false );
         break;
 
     case Tanyatu::IPlayQueue::RepeatType_RepeatAll:
         PLAYQUEUE()->setRepeat(
                     Tanyatu::IPlayQueue::RepeatType_RepeatOne );
         m_repeatButton->setText( tr( "ALL" ));
+        m_repeatButton->setChecked( true );
         break;
 
     case Tanyatu::IPlayQueue::RepeatType_RepeatOne:
         PLAYQUEUE()->setRepeat(
                     Tanyatu::IPlayQueue::RepeatType_NoRepeat );
         m_repeatButton->setText( tr( "ONE" ));
+        m_repeatButton->setChecked( true );
         break;
     }
 }
@@ -362,16 +442,16 @@ void AudioPlayerWidget::onTrackSelected( Tanyatu::Data::MediaItem * item )
         Tanyatu::Data::AudioTrack *track =
                 static_cast< Tanyatu::Data::AudioTrack *>( item );
         showTrackDetails( track );
-        m_bitrate->setText( QString( "%1kbps" ).arg(
+        m_bitrate->setText( QString( "%1K" ).arg(
                                 track->bitRate() ));
         m_sampleFreq->setText(
-                    QString( "%1.%2KHz" )
+                    QString( "%1.%2K" )
                     .arg( track->sampleRate() / 1000 )
                     .arg( track->sampleRate() % 1000 / 100 ));
         QFileInfo info( track->url().toLocalFile() );
         m_format->setText( info.suffix().toUpper() );
         m_elapsedTime->setText( "00:00" );
-        m_remainingTime->setText(
+        m_totalTime->setText(
                     Tanyatu::Utils::getStringTime( track->duration() ));
 
 //        QImage *image = nullptr;//Tanyatu::Utils::imageForTrack( track );
@@ -403,13 +483,8 @@ void AudioPlayerWidget::onPlayerTick( qint64 msecEllapsed )
     if( item && ( item->type() == Tanyatu::Data::Media_LocalAudio ||
                   item->type() == Tanyatu::Data::Media_StoredAudio ))
     {
-        Tanyatu::Data::AudioTrack *track =
-                static_cast< Tanyatu::Data::AudioTrack *>( item );
         m_elapsedTime->setText( Tanyatu::Utils::getStringTime(
                                     msecEllapsed / 1000 ));
-        m_remainingTime->setText(
-                    Tanyatu::Utils::getStringTime(
-                        track->duration() - ( msecEllapsed /1000 )));
     }
 }
 
@@ -467,3 +542,4 @@ void AudioPlayerWidget::dropEvent( QDropEvent *event )
     emit urlsDropped( event->mimeData()->urls() );
 }
 
+}
