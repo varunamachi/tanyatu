@@ -51,15 +51,6 @@ public slots:
         m_roundedRect = useRoundedRect;
     }
 
-signals:
-    void maximize();
-
-    void minimize();
-
-    void restore();
-
-    void exit();
-
 protected:
     void paintEvent( QPaintEvent *event );
 
@@ -79,6 +70,8 @@ private:
     AudioPlayerWidget *m_audioPlayer;
 
     bool m_roundedRect;
+
+    friend class ChilliWindow;
 
 };
 

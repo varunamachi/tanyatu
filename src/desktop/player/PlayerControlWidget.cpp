@@ -41,7 +41,10 @@ namespace GreenChilli {
 PlayerControlWidget::PlayerControlWidget( QWidget *parent )
     : QWidget( parent )
 {
-    m_scroller      = new GreenChilli::Widgets::TextScroller( this );
+    m_scroller      = new GreenChilli::Widgets::TextScroller(
+                                QColor( 0x30, 0x30, 0x30 ),
+                                QColor( 255, 168, 88 ),
+                                this );
     m_seekSlider    = new GreenChilli::Widgets::SuperSlider( this );
 
     m_prevButton    = new GreenChilli::Widgets::ImagePushButton( this );

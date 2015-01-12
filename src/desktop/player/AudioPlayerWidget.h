@@ -54,6 +54,10 @@ signals:
 
     void playFromPlaylist();
 
+    void minimize();
+
+    void exit();
+
 protected:
     void dragEnterEvent( QDragEnterEvent * event );
 
@@ -130,7 +134,7 @@ private:
 
     QLabel *m_elapsedTime;
 
-    QLabel *m_remainingTime;
+    QLabel *m_totalTime;
 
     QLabel *m_bitrate;
 
