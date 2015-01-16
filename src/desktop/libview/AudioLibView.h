@@ -108,6 +108,7 @@ private slots:
     void reloadAlbums();
 
     void reloadArtists();
+
 private:
     void setupUi();
 

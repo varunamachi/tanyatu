@@ -189,15 +189,12 @@ void JobManager::run()
     while( ! shouldExit ){
         m_lock.lockForRead();
         shouldExit = m_stopProcessing;
-        hasPendingTasks = m_jobs.size();
+        hasPendingTasks = m_jobs.size() != 0;
         m_lock.unlock();
         if( hasPendingTasks ) {
             m_lock.lockForWrite();
             job = m_jobs.last();
             m_jobs.removeLast();
-            m_lock.unlock();
-
-            m_lock.lockForWrite();
             bool isCancelled = m_cancelledJobs.remove( job->name() );
             m_lock.unlock();
 
@@ -205,20 +202,25 @@ void JobManager::run()
                 emit executionStarted( job->name(), job->category() );
                 RespFunc func = job->execute();
                 emit executionFinished( job->name(), job->category() );
-                if( job->shouldPostResponse() ) {
-                    QCoreApplication::postEvent(
-                                this,
-                                new CallbackEvent( func ),
-                                100 );
-                }
-                else {
-                    func();
+                if( func ) {
+                    if( job->shouldPostResponse() ) {
+                        QCoreApplication::postEvent(
+                                    this,
+                                    new CallbackEvent( func ),
+                                    100 );
+                    }
+                    else {
+                        func();
+                    }
                 }
             }
             else {
                 emit jobDescarded( job->name(), job->category() );
             }
             delete job;
+        }
+        else {
+            this->sleep( 500 );
         }
     }
 

@@ -38,7 +38,7 @@ public:
     static QString getStringTime( int timeInSeconds );
 
     template< typename T >
-    static void deleteAllFormList( const QList< T *> &list )
+    static void deleteAllFormList( QList< T *> &list )
     {
         std::for_each( list.begin(),
                        list.end(),
@@ -46,6 +46,7 @@ public:
                        {
                             delete item;
                        });
+        list.clear();
     }
 
 //    static QImage* imageForTrack( Data::AudioTrack *track );

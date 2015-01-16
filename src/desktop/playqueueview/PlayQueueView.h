@@ -57,6 +57,9 @@ public:
                 return QColor( 0xB2, 0x6B, 0x00 );
             }
         }
+        if( role == Qt::TextAlignmentRole && index.column() == 2 ) {
+            return Qt::AlignRight;
+        }
         return Tanyatu::Ui::MediaItemModel::data( index, role );
     }
 

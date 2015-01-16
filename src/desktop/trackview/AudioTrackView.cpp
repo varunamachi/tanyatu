@@ -145,7 +145,10 @@ void AudioTrackView::setupUi( QAbstractItemModel *model, quint32 ratingCol )
     m_view->setSortingEnabled( true );
     m_view->setWordWrap( false );
     m_view->setAutoScroll( true );
-    m_view->header()->setSectionResizeMode( QHeaderView::Stretch );
+    m_view->header()->setSectionResizeMode( 0, QHeaderView::Stretch );
+    m_view->header()->setSectionResizeMode( 1, QHeaderView::Stretch );
+    m_view->header()->setSectionResizeMode( 2, QHeaderView::Stretch );
+    m_view->header()->setSectionResizeMode( 3, QHeaderView::Stretch );
     m_view->setColumnWidth( 4, 16 );
     m_view->header()->setStretchLastSection( false );
     m_view->hideColumn( 0 );

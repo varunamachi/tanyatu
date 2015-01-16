@@ -164,8 +164,8 @@ void StdTrackInformationManager::onRemovalFromStorage(
     QString albumName = track->album();
     Data::ArtistInfo *artist = this->artist( artistName );
     Data::AlbumInfo *album = this->album( artistName, albumName );
-    QString albumId = album->id();
-    if( artist && album ) {
+    if( artist != nullptr && album != nullptr ) {
+        QString albumId = album->id();
         QSet< QString > *tracks = m_albumIdToTracks.value( albumId );
         if( tracks->contains( track->id() )) {
             tracks->remove( track->id() );
@@ -292,7 +292,8 @@ void StdTrackInformationManager::onRemovalFromStorage(
     }
     auto task = [ objects, sets ]() -> Tanyatu::RespFunc
     {
-        AT_SCOPE_EXIT( delete objects; delete sets );
+        AT_SCOPE_EXIT( delete objects );
+        AT_SCOPE_EXIT( delete sets );
         DATA_UPDATER()->remove( *objects );
         Tanyatu::Utils::deleteAllFormList< Data::StoredObject >( *objects );
         Tanyatu::Utils::deleteAllFormList< QSet< QString > >( *sets );

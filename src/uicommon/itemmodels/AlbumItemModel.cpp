@@ -109,6 +109,9 @@ QVariant AlbumItemModel::data( const QModelIndex &index, int role ) const
     else if( role == Qt::SizeHintRole ) {
         return QSize( 0, 18 );
     }
+    else if( role == Qt::TextAlignmentRole && index.column() == 3 ) {
+        return Qt::AlignRight;
+    }
     return QVariant();
 }
 

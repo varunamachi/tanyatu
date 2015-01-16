@@ -260,7 +260,7 @@ void AudioPlayerWidget::setupUi()
     QString timeLabelCss = "QLabel {"
                            "   font-size: 9px;"
                            "   background-color: rgba( 0,0,0,0 );"
-                           "   font: monospace;"
+                           "   font: ubuntu-mono;"
                            "}";
     m_elapsedTime->setStyleSheet( timeLabelCss );
     m_totalTime->setStyleSheet( timeLabelCss );
@@ -388,13 +388,17 @@ void AudioPlayerWidget::setVolume(qint64 value)
 void AudioPlayerWidget::setVolmeSliderValue( int volume )
 {
     m_volumeSlider->setCurrentValue( volume );
-    m_volumeLable->setText( QString::number( volume ));
+    QString num;
+    num.sprintf( "%03d",  volume );
+    m_volumeLable->setText( num );
 }
 
 
 void AudioPlayerWidget::setVolumeLabelText( qint64 value )
 {
-    m_volumeLable->setText( QString::number( value ));
+    QString num;
+    num.sprintf( "%03d",  value );
+    m_volumeLable->setText( num );
 }
 
 

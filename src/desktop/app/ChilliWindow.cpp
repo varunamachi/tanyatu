@@ -217,12 +217,19 @@ QString ChilliMainWidget::createStyleSheet()
         "QLineEdit{ background-color: #444444;}"
         "QMenu{ background-color: #444444;}"
         "QMenu::item:selected{background-color: #696969; }"
-/*         "QHeaderView::section {"
-         "   background-color: black;"
-         "   color: white;"
-         "   padding-left: 4px;"
-         "   border: 1px solid #6c6c6c;"
-         "}"*/;
+        "QScrollBar::handle {"
+            "background: #6F5C44;;"
+            "min-width: 30px;"
+            "border-radius: 3px;"
+        "}"
+        "QScrollBar{"
+            "background: #202020;"
+            "border-radius: 5px;"
+        "}"
+        "QScrollBar::add-line, QScrollBar::sub-line{"
+            "border: 2px solid #202020;"
+            "background: #202020;"
+        "}";
 }
 
 

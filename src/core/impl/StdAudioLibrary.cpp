@@ -161,6 +161,12 @@ void StdAudioLibrary::setRating( QString id,
         track->setRating( rating );
         emit itemChanged( track );
         emit libraryChanged();
+        auto task = [ track ]() -> Tanyatu::RespFunc
+        {
+            DATA_UPDATER()->updateRating( track );
+            return nullptr;
+        };
+        JOB_MANAGER()->addJob( "update_track_rating", task );
     }
 }
 

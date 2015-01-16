@@ -72,11 +72,16 @@ private:
 
 } //end of namespace Tanyatu
 
+#define TOKENPASTE( x, y ) x##y
+#define TOKENPASTE2( x, y ) TOKENPASTE( x, y )
+#define UNK( n ) TOKENPASTE2( n, __LINE__ )
+
 #define AT_SCOPE_EXIT( x ) \
-    Tanyatu::ScopedOperation __tnt_scpop( 0, [ & ]() { x; })
+    Tanyatu::ScopedOperation UNK( tnt_scpop )( 0, [ & ]() { x; })
 
 #define SCOPE_LIMIT( x, y ) \
-    Tanyatu::ScopedOperation __tnt_scpop( [ & ]() { x; }, [ & ]() { y; })
+    Tanyatu::ScopedOperation UNK( tnt_scpop )( [ & ]() { x; },  \
+                                                  [ & ]() { y; })
 
 
 #define TNT_SCOPE

@@ -98,10 +98,10 @@ void SuperSlider::paintEvent( QPaintEvent *event )
 {
     Q_UNUSED( event )
     QPainter painter( this );
-//    painter.fillRect( this->rect(), Qt::red );
-
     QBrush brush = m_enabled ? m_brush : m_backgroundBrush;
-    int curPos =  ( float( m_curentVal ) / m_maxVal ) * m_drawingWidth;
+    int curPos =  m_curentVal != m_maxVal
+            ? ( float( m_curentVal ) / m_maxVal ) * m_drawingWidth
+            : m_drawingWidth;
     painter.fillRect( m_halfDrawOffset,
                       m_halfDrawOffset,
                       curPos,
@@ -117,11 +117,8 @@ void SuperSlider::paintEvent( QPaintEvent *event )
     painter.setPen( Qt::NoPen );
     painter.setBrush( color );
     painter.setRenderHint( QPainter::Antialiasing );
-    int radius = m_height / 2;
+    int radius = m_halfDrawOffset;
     int xPos = int( curPos + m_halfDrawOffset );
-    xPos = xPos + radius > this->width() ? this->width() - radius
-                                         : ( xPos - radius < 0 ? radius
-                                                               : xPos );
     painter.drawEllipse( QPoint(  xPos,
                                   int( m_drawOffset + m_drawingHeight ) / 2 ),
                          radius,
@@ -156,7 +153,9 @@ void SuperSlider::mouseMoveEvent( QMouseEvent *event )
         int xOffset = event->x() - m_mousePos.x();
         m_mousePos = event->pos();
         qreal addn = ( xOffset * m_maxVal ) / m_drawingWidth;
-        int incr = addn > 0.5 ? 1 : addn < -0.5 ? -1 : 0;
+        int incr = m_maxVal < m_drawingWidth
+                ? ( addn > 0.5 ? 1 : addn < -0.5 ? -1 : 0 )
+                : addn;
         qint64 curVal = m_curentVal + incr;
         setCurrentValue( curVal );
         emit seeked( m_curentVal );
@@ -168,7 +167,9 @@ void SuperSlider::mouseMoveEvent( QMouseEvent *event )
 void SuperSlider::wheelEvent( QWheelEvent *event )
 {
     qreal addn = ( m_maxVal * event->delta()  ) / ( m_drawingWidth * 60 );
-    int incr = addn > 0.5 ? 1 : addn < -0.5 ? -1 : 0;
+    int incr = m_maxVal < m_drawingWidth
+            ? ( addn > 0.5 ? 1 : addn < -0.5 ? -1 : 0 )
+            : addn;
     qint64 newVal = m_curentVal + incr;
     if( newVal <= m_maxVal ) {
         emit seeked( newVal );

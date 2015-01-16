@@ -35,6 +35,14 @@ public:
 
     }
 
+    QVariant data( const QModelIndex &index, int role ) const
+    {
+        if( role == Qt::TextAlignmentRole && index.column() == 4 ) {
+            return Qt::AlignRight;
+        }
+        return Tanyatu::Ui::AudioTrackModel::data( index, role );
+    }
+
     QVariant dataForTrack( Tanyatu::Data::StoredAudio *item, int column ) const
     {
         if( item ) {
