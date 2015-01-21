@@ -220,7 +220,7 @@ void JobManager::run()
             delete job;
         }
         else {
-            this->sleep( 500 );
+            this->sleep( 1 );
         }
     }
 
