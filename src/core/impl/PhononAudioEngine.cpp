@@ -20,7 +20,7 @@
  * SOFTWARE.
  ******************************************************************************/
 
-#if 0
+
 
 #include "PhononAudioEngine.h"
 
@@ -46,12 +46,11 @@ static inline void delay()
 //    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
 
-PhononAudioEngine::PhononAudioEngine(
-        QObject *parent) :
-    IEngine(parent),
-    m_mediaObject( new Phonon::MediaObject(this) ),
-    m_audioOutput( new Phonon::AudioOutput(Phonon::MusicCategory, this)),
-    m_numRetries( NUM_RETRIES )
+PhononAudioEngine::PhononAudioEngine( QObject *parent)
+    : IEngine( parent )
+    , m_mediaObject( new Phonon::MediaObject(this) )
+    , m_audioOutput( new Phonon::AudioOutput(Phonon::MusicCategory, this))
+    , m_numRetries( NUM_RETRIES )
 
 {
     m_mediaObject->setTickInterval(1000);
@@ -270,7 +269,7 @@ Data::MediaItem *PhononAudioEngine::currentItem()
 } } //Ending namespaces
 
 
-#endif
+
 
 
 

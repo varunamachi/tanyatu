@@ -31,10 +31,10 @@ SOURCES += \
 
 DEFINES += TANYATU_CORE
 
-linux-g++ {
-    LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL
-            #-lphonon4qt5
-}
+#linux-g++ {
+#    LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL
+##    LIBS += -L/usr/lib/x86_64-linux-gnu -lphonon4qt5
+#}
 
 *-g++* {
     QMAKE_CXXFLAGS += -std=c++11

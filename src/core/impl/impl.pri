@@ -6,7 +6,7 @@ HEADERS += \
         impl/StdTrackInformationManager.h \
         impl/SettingsManager.h \
         impl/StdSettingsReaderWriter.h \
-        impl/MMAudioEngine.h
+        impl/MMAudioEngine.h \
 	
 SOURCES += \
         impl/StdAudioLibrary.cpp \
@@ -14,10 +14,10 @@ SOURCES += \
         impl/StdPlaylistManager.cpp \
         impl/StdPlayQueue.cpp \
         impl/StdTrackInformationManager.cpp \
-        impl/MMAudioEngine.cpp
+        impl/MMAudioEngine.cpp \
 
 
- linux-g++ {
+# linux-g++ {
     HEADERS += impl/PhononAudioEngine.h
     SOURCES += impl/PhononAudioEngine.cpp
- }
+# }

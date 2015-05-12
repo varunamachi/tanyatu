@@ -21,6 +21,7 @@
  ******************************************************************************/
 #include <QEvent>
 #include <QCoreApplication>
+#include <QDebug>
 
 #include "JobManager.h"
 
@@ -131,6 +132,7 @@ void JobManager::addJob( IJob *job )
     if( ! this->isRunning() ) {
         this->start();
     }
+    qDebug() << "Added Job: " << job->name();
 }
 
 
@@ -147,6 +149,7 @@ void JobManager::addJob( QString name,
     if( ! this->isRunning() ) {
         this->start();
     }
+    qDebug() << "Added Job: " << name;
 }
 
 
@@ -193,10 +196,13 @@ void JobManager::run()
         m_lock.unlock();
         if( hasPendingTasks ) {
             m_lock.lockForWrite();
+            qDebug() << "Jobs_1: " <<  m_jobs.size();
             job = m_jobs.last();
             m_jobs.removeLast();
             bool isCancelled = m_cancelledJobs.remove( job->name() );
+            qDebug() << "Jobs_2: " <<  m_jobs.size();
             m_lock.unlock();
+            qDebug() << "Got Job: " << job->name();
 
             if( ! isCancelled ) {
                 emit executionStarted( job->name(), job->category() );
@@ -217,14 +223,13 @@ void JobManager::run()
             else {
                 emit jobDescarded( job->name(), job->category() );
             }
+            qDebug() << "Finished Job: " << job->name();
             delete job;
         }
         else {
             this->sleep( 1 );
         }
     }
-
-
 }
 
 bool JobManager::event( QEvent *event )

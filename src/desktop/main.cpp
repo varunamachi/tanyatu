@@ -34,6 +34,7 @@
 #include <core/datasource/StdDataSourceManager.h>
 #include <core/datasource/StdDataUpdater.h>
 #include <core/coreutils/FileSystemUtil.h>
+#include <core/impl/PhononAudioEngine.h>
 #include <uicommon/uiutils/ChilliCache.h>
 #include <uicommon/itemmodels/CommonTrackModel.h>
 
@@ -54,7 +55,7 @@ void initCoreComponents( QObject *parent )
     Tanyatu::FileSystemUtil::initTanyatuFS();
 
     Tanyatu::IEngine *engine =
-            new Tanyatu::Impl::MMAudioEngine( parent );
+            new Tanyatu::Impl::PhononAudioEngine( parent );
     Tanyatu::Impl::StdAudioLibrary *audLib =
             new Tanyatu::Impl::StdAudioLibrary( parent );
     Tanyatu::ITrackInformationManager *audMan =
@@ -108,10 +109,10 @@ void initUiComponents( QMainWindow *win )
                                                                   4,
                                                                   win );
     GreenChilli::ComponentManager::get()->addComponent( trackView );
-    GreenChilli::ComponentManager::get()->addComponent(
-                new GreenChilli::Components::AudioLibView( win ));
-    GreenChilli::ComponentManager::get()->addComponent(
-                new GreenChilli::Components::PlaylistView( win ));
+//    GreenChilli::ComponentManager::get()->addComponent(
+//                new GreenChilli::Components::AudioLibView( win ));
+//    GreenChilli::ComponentManager::get()->addComponent(
+//                new GreenChilli::Components::PlaylistView( win ));
 
     QObject::connect( AUDIO_LIB(),
                       &Tanyatu::IAudioLibrary::libraryChanged,
@@ -123,11 +124,21 @@ void initUiComponents( QMainWindow *win )
         trackModel->setTrackList( audio );
     });
 
+    QObject::connect( AUDIO_LIB(),
+                      &Tanyatu::IAudioLibrary::aboutToClear,
+                      [ = ]()
+    {
+        auto audio = new QList< Tanyatu::Data::StoredAudio *>();
+        trackModel->clear( true );
+        trackModel->setTrackList( audio );
+    });
+
 }
 
 
 int main(int argc, char *argv[])
 {
+    try {
     QApplication a(argc, argv);
     QCoreApplication::instance()->setApplicationName( "GreenChilli" );
     a.setApplicationName( QObject::tr( "GreenChilli" ));
@@ -143,5 +154,8 @@ int main(int argc, char *argv[])
 //    GreenChilli::PlayerControlWidget win;
 //    win.show();
     return a.exec();
+    } catch( ... ) {
+        qDebug() << "Oh oho";
+    }
 }
 

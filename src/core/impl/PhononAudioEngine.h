@@ -20,7 +20,6 @@
  * SOFTWARE.
  ******************************************************************************/
 
-#if 0
 
 #pragma once
 
@@ -34,6 +33,7 @@
 
 #include "../data/MediaItem.h"
 #include "../interfaces/IEngine.h"
+#include "../T.h"
 
 
 namespace Tanyatu { namespace Impl {
@@ -195,5 +195,4 @@ private:
 }
 
 
-#endif
 

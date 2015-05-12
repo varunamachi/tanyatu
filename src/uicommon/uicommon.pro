@@ -7,7 +7,7 @@ LIBS        += -L$$PWD/../../lib/taglib/lib -ltag
 LIBS         += -L../bin -ltntcore
 linux-g++ {
     LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL
-            #-lphonon4qt5
+    LIBS += -L/usr/lib/x86_64-linux-gnu -lphonon4qt5
 }
 
 
