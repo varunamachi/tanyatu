@@ -288,16 +288,18 @@ void StdAudioLibrary::clearLibrary()
         emit aboutToChangeLibrary();
         emit aboutToClear();
         auto allTracks = new QList< Data::StoredAudio *>();
-        std::copy( m_tracks.begin(), m_tracks.end(), allTracks->begin() );
+        foreach( Data::StoredAudio *saudio,  m_tracks ) {
+            allTracks->append( saudio );
+        }
         m_tracks.clear();
         emit cleared();
         emit libraryChanged();
 
-        auto task = [ allTracks ]() -> Tanyatu::RespFunc
-        {
+        auto task = [ allTracks ]() -> Tanyatu::RespFunc {
             AT_SCOPE_EXIT( delete allTracks );
-            for( auto it = allTracks->begin(); it != allTracks->end(); ++ it ) {
-                delete (*it);
+            DATA_UPDATER()->clearAudioLibrary();
+            foreach( Data::StoredAudio *saudio, *allTracks ) {
+                delete saudio;
             }
             return nullptr;
         };

@@ -56,7 +56,6 @@ void StdPlayQueue::addItem( const Tanyatu::Data::MediaItem *c_item,
         emit aboutToChangePlayQueue();
         m_items.append( item );
         m_unplayedIds.insert( item->trackId() );
-        emit playQueueChanged();
         emit itemAdded( item );
         if( selected ) {
             selectIndex( m_items.size() - 1 );

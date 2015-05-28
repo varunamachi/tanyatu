@@ -109,10 +109,10 @@ void initUiComponents( QMainWindow *win )
                                                                   4,
                                                                   win );
     GreenChilli::ComponentManager::get()->addComponent( trackView );
-//    GreenChilli::ComponentManager::get()->addComponent(
-//                new GreenChilli::Components::AudioLibView( win ));
-//    GreenChilli::ComponentManager::get()->addComponent(
-//                new GreenChilli::Components::PlaylistView( win ));
+    GreenChilli::ComponentManager::get()->addComponent(
+                new GreenChilli::Components::AudioLibView( win ));
+    GreenChilli::ComponentManager::get()->addComponent(
+                new GreenChilli::Components::PlaylistView( win ));
 
     QObject::connect( AUDIO_LIB(),
                       &Tanyatu::IAudioLibrary::libraryChanged,
