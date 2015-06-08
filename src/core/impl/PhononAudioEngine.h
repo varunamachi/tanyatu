@@ -25,7 +25,7 @@
 
 #include <QtGlobal>
 
-//#ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX
 
 #include <QObject>
 #include <phonon4qt5/phonon/MediaObject>
@@ -195,4 +195,4 @@ private:
 }
 
 
-
+#endif
