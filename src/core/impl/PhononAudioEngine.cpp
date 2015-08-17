@@ -24,7 +24,7 @@
 
 #include "PhononAudioEngine.h"
 
-//#ifdef Q_OS_LINUX
+#ifdef Q_OS_LINUX
 
 #include <QCoreApplication>
 #include <QTime>
@@ -268,7 +268,7 @@ Data::MediaItem *PhononAudioEngine::currentItem()
 } } //Ending namespaces
 
 
-
+#endif
 
 
 

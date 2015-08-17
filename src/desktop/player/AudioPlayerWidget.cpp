@@ -147,7 +147,14 @@ void AudioPlayerWidget::setupUi()
 //                           "background-color: #101010;" );
 //    middle->setContentsMargins( QMargins() );
     middle->setStyleSheet( "border-radius: 5px;"
-                           "background-color: qlineargradient(spread:pad, x1:1, y1:0.205, x2:1, y2:0.949, stop:0.895288 rgba(10, 10, 10, 255), stop:1 rgba(0, 0, 0, 255));" );
+                           "background-color: qlineargradient("
+                                "spread:pad, "
+                                "x1:1, "
+                                "y1:0.205, "
+                                "x2:1, "
+                                "y2:0.949, "
+                                "stop:0.895288 rgba(10, 10, 10, 255), "
+                                "stop:1 rgba(0, 0, 0, 255));" );
     middle->setContentsMargins( QMargins() );
 
 
@@ -168,10 +175,10 @@ void AudioPlayerWidget::setupUi()
 
     QString winButtonCss = " QPushButton {"
                            "     border-radius: 5px;"
-                           "     max-width: 32px;"
-                           "     max-height:32px;"
-                           "     min-width: 32px;"
-                           "     min-height: 32px;"
+                           "     max-width: 16px;"
+                           "     max-height:16px;"
+                           "     min-width: 16px;"
+                           "     min-height: 16px;"
                            "     font-size: 14px;"
                            "     background-color: black;"
                            " }"
