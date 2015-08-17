@@ -60,6 +60,11 @@ void AudioTrackModel::setTrackList( QList< Data::StoredAudio *> *trackList )
 {
     if( trackList ) {
         beginResetModel();
+        if( m_tracks != nullptr ) {
+            m_tracks->clear();
+            delete m_tracks;
+            m_tracks = nullptr;
+        }
         m_tracks = trackList;
         endResetModel();
     }

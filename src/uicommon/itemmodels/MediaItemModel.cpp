@@ -30,9 +30,10 @@ namespace Tanyatu { namespace Ui {
 
 
 MediaItemModel::MediaItemModel( int numColumns, QObject *parent ) :
-    QAbstractItemModel( parent ),
-    m_columnCount( numColumns ),
-    m_items( 0 )
+    QAbstractItemModel( parent )
+  , m_listIsOwned( false )
+  , m_columnCount( numColumns )
+  , m_items( 0 )
 {
 }
 
@@ -56,23 +57,33 @@ const QList< Data::MediaItem *> * MediaItemModel::getItemList()
     return m_items;
 }
 
-void MediaItemModel::setItemList( const QList< Data::MediaItem *> *itemList )
+void MediaItemModel::setItemList( const QList< Data::MediaItem *> *itemList,
+                                  bool ownList )
 {
-    if( m_items ) {
+    if( m_items != nullptr && m_listIsOwned ) {
         beginResetModel();
+        if( m_items != nullptr ) {
+//            m_items->clear();
+            delete m_items;
+            m_items = nullptr;
+        }
         m_items = itemList;
         endResetModel();
     }
     else {
         m_items = itemList;
     }
+    m_listIsOwned = ownList;
 }
 
 void MediaItemModel::clear()
 {
     if( m_items ) {
         beginResetModel();
-        m_items = 0;
+        if( m_listIsOwned ) {
+            delete m_items;
+        }
+        m_items = nullptr;
         endResetModel();
     }
 }

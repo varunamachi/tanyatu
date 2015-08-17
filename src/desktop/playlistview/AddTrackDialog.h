@@ -23,6 +23,8 @@
 
 #include <QDialog>
 
+#include <uicommon/itemmodels/CommonTrackModel.h>
+
 #include "../widgets//SearchBox.h"
 #include "../viewcommon/CommonAudioTrackView.h"
 #include "../viewcommon/TrackFilter.h"
@@ -46,7 +48,11 @@ public:
         m_view->view()->selectionModel()->clear();
     }
 
+    void refreshTracks();
+
 private:
+    Tanyatu::Ui::CommonTrackModel *m_trackModel;
+
     Views::CommonAudioTrackView *m_view;
 
     Widgets::SearchBox *m_searchBox;

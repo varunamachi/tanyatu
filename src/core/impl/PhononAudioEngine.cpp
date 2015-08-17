@@ -169,7 +169,7 @@ int PhononAudioEngine::volume()
 
 
 void PhononAudioEngine::setVolume(int value) {
-    if(value <= 100) {
+    if(value >= 0 && value <= 100) {
         m_audioOutput->setVolume((static_cast<qreal>(value)) * 0.01);
         emit volumeChanged(value);
     }
@@ -184,8 +184,7 @@ void PhononAudioEngine::mute(bool value) {
 
 IEngine::State PhononAudioEngine::state()
 {
-    if( m_mediaObject )
-    {
+    if( m_mediaObject ) {
         return mapPhononStateToEngineState( m_mediaObject->state() );
     }
     return IEngine::State::Stopped;

@@ -23,7 +23,9 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
+
 #include <core/T.h>
+#include <uicommon/itemmodels/CommonTrackModel.h>
 
 #include "AddTrackDialog.h"
 #include "../viewcommon/RatingDelegate.h"
@@ -35,14 +37,14 @@ AddTrackDialog::AddTrackDialog( QWidget *parent )
     : QDialog( parent )
 {
     m_proxyModel = new Views::TrackFilter( this );
-//    m_proxyModel->setSourceModel( AUDIO_LIB() );
+    m_trackModel = new Tanyatu::Ui::CommonTrackModel( 5, this );
+    m_proxyModel->setSourceModel( m_trackModel );
     m_view = new Views::CommonAudioTrackView(
                 m_proxyModel,
                 new Views::RatingDelegate( 4, false, this),
                 this );
     m_view->setViewSelectionMode( QAbstractItemView::MultiSelection );
     m_searchBox = new Widgets::SearchBox( this );
-
 
     QPushButton *addButton = new QPushButton( tr( "Add" ), this );
     QPushButton *closeButton = new QPushButton( tr( "Close" ), this );
@@ -63,6 +65,15 @@ AddTrackDialog::AddTrackDialog( QWidget *parent )
              this, SLOT( accept()) );
     connect( closeButton, SIGNAL( clicked() ),
              this, SLOT( reject() )) ;
+}
+
+
+void AddTrackDialog::refreshTracks()
+{
+    QList< Tanyatu::Data::StoredAudio *> *tracks
+            = new QList< Tanyatu::Data::StoredAudio *>();
+    AUDIO_LIB()->allItems( *tracks );
+    m_trackModel->setTrackList( tracks );
 }
 
 

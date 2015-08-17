@@ -49,6 +49,11 @@ void AlbumItemModel::setAlbumList( QList< Data::AlbumInfo *> *albumList )
 {
     if( albumList ) {
         beginResetModel();
+        if( m_albums != nullptr ) {
+            m_albums->clear();
+            delete m_albums;
+            m_albums = nullptr;
+        }
         m_albums = albumList;
         endResetModel();
     }

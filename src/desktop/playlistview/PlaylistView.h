@@ -23,7 +23,9 @@
 
 #include <QToolBar>
 #include <QAction>
+
 #include <uicommon/itemmodels/AudioTrackModel.h>
+#include <uicommon/itemmodels/PlaylistItemModel.h>
 
 #include "PlaylistProxyModel.h"
 #include "AddPlaylistDialog.h"
@@ -82,12 +84,16 @@ private slots:
 
     void onAddTracksToPlayQueue();
 
+    void onPlaylistManagerChanged();
+
 private:
     void setupUi();
 
     void setupActions();
 
     void setupConnections();
+
+    Tanyatu::Ui::PlaylistItemModel *m_playlistModel;
 
     Playlists::AddTrackDialog *m_contentDialog;
 

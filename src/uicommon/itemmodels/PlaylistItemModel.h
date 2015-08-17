@@ -39,7 +39,9 @@ public:
 
     ~PlaylistItemModel();
 
-    QList< Data::SavedPlaylist * >& playlists( );
+    void setPlaylists( QList< Data::SavedPlaylist *> *playlists );
+
+    const QList< Data::SavedPlaylist * > *playlists( );
 
     int rowCount( const QModelIndex &parent ) const;
 
@@ -63,11 +65,11 @@ public:
 
 public slots:
 
-    void clear();
+    void clear( bool deleteList );
 
 private:
 
-    QList< Data::SavedPlaylist * > m_playlists;
+    QList< Data::SavedPlaylist * > *m_playlists;
 
 
 };

@@ -333,7 +333,7 @@ void PlaylistWidget::onPlaylistChanged()
         m_removeAction->setEnabled(numSelection);
         const QList< Tanyatu::Data::MediaItem *> *allTracks
                 = PLAYQUEUE()->getAllItemsInOrder();
-        m_model->setItemList( allTracks );
+        m_model->setItemList( allTracks, false );
     }
 }
 

@@ -92,7 +92,7 @@ public:
         return "";
     }
 
-    void clearSelection( int row ) {
+    void clearSelection( int /*row*/ ) {
         beginResetModel();
         endResetModel();
     }

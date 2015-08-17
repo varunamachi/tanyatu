@@ -46,8 +46,13 @@ ArtistItemModel::~ArtistItemModel()
 
 void ArtistItemModel::setArtistList( QList< Data::ArtistInfo *> *artistList )
 {
-    if( artistList ) {
+    if( artistList != nullptr ) {
         beginResetModel();
+        if( m_artists != nullptr ) {
+            m_artists->clear();
+            delete m_artists;
+            m_artists = nullptr;
+        }
         m_artists = artistList;
         endResetModel();
     }
@@ -56,13 +61,13 @@ void ArtistItemModel::setArtistList( QList< Data::ArtistInfo *> *artistList )
 
 void ArtistItemModel::clear( bool deleteList )
 {
-    if( m_artists ) {
+    if( m_artists != nullptr ) {
         beginResetModel();
         if( deleteList ) {
             m_artists->clear();
             delete m_artists;
         }
-        m_artists = 0;
+        m_artists = nullptr;
         endResetModel();
     }
 }
@@ -85,7 +90,7 @@ int ArtistItemModel::columnCount( const QModelIndex &parent ) const
 QVariant ArtistItemModel::data( const QModelIndex &index, int role ) const
 {
     if( ! index.isValid()
-            || ! m_artists
+            || m_artists == nullptr
             || index.row() >= m_artists->size() ) {
         return QVariant();
     }
@@ -146,10 +151,7 @@ QModelIndex ArtistItemModel::parent( const QModelIndex &child ) const
 
 bool ArtistItemModel::hasChildren( const QModelIndex &parent ) const
 {
-    if(! parent.isValid()) {
-        return true;
-    }
-    return false;
+    return ! parent.isValid();
 }
 
 

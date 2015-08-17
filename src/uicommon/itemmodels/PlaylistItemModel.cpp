@@ -32,8 +32,9 @@
 namespace Tanyatu { namespace Ui {
 
 
-PlaylistItemModel::PlaylistItemModel(QObject *parent) :
-    QAbstractItemModel(parent)
+PlaylistItemModel::PlaylistItemModel(QObject *parent)
+    : QAbstractItemModel(parent)
+    , m_playlists( nullptr )
 {
 
 }
@@ -44,8 +45,23 @@ PlaylistItemModel::~PlaylistItemModel()
 
 }
 
+void PlaylistItemModel::setPlaylists(
+        QList< Data::SavedPlaylist * > *playlists )
+{
+    if( playlists != nullptr ) {
+        beginResetModel();
+        if( m_playlists != nullptr ) {
+            m_playlists->clear();
+            delete m_playlists;
+            m_playlists = nullptr;
+        }
+        m_playlists = playlists;
+        endResetModel();
+    }
+}
 
-QList< Tanyatu::Data::SavedPlaylist * >& PlaylistItemModel::playlists( )
+
+const QList< Data::SavedPlaylist * > * PlaylistItemModel::playlists()
 {
     return m_playlists;
 }
@@ -54,7 +70,7 @@ QList< Tanyatu::Data::SavedPlaylist * >& PlaylistItemModel::playlists( )
 int PlaylistItemModel::rowCount( const QModelIndex &parent ) const
 {
     Q_UNUSED( parent )
-    return m_playlists.size();
+    return m_playlists != nullptr ? m_playlists->size() : 0;
 }
 
 int PlaylistItemModel::columnCount( const QModelIndex &parent ) const
@@ -65,14 +81,17 @@ int PlaylistItemModel::columnCount( const QModelIndex &parent ) const
 
 QVariant PlaylistItemModel::data( const QModelIndex &index, int role ) const
 {
-    if( ! index.isValid() || index.row() >= m_playlists.size() ) {
+    if( m_playlists == nullptr ) {
         return QVariant();
     }
-    if ( role == Qt::TextAlignmentRole ) {
+    if( ! index.isValid() || index.row() >= m_playlists->size() ) {
+        return QVariant();
+    }
+    if( role == Qt::TextAlignmentRole ) {
         return int ( Qt::AlignLeft | Qt::AlignVCenter );
     }
-    else if ( role == Qt::DisplayRole ) {
-        Data::SavedPlaylist *playlist = m_playlists.at( index.row() );
+    else if( role == Qt::DisplayRole ) {
+        Data::SavedPlaylist *playlist = m_playlists->at( index.row() );
         switch( index.column() ) {
         case 0: return playlist->name();
         case 1: return T::get()->playlistManager()->numTracksIn(
@@ -82,7 +101,7 @@ QVariant PlaylistItemModel::data( const QModelIndex &index, int role ) const
         }
     }
     else if( role == Qt::ToolTipRole ) {
-        Data::SavedPlaylist *playlist = m_playlists.at( index.row() );
+        Data::SavedPlaylist *playlist = m_playlists->at( index.row() );
         QString tooltip = QString() +
                   tr( "Name  : <b>" ) + playlist->name()  + "</b><br>"
                 + tr( "Created : <b>" )+
@@ -139,10 +158,7 @@ QModelIndex PlaylistItemModel::parent( const QModelIndex &child ) const
 
 bool PlaylistItemModel::hasChildren( const QModelIndex &parent ) const
 {
-    if(! parent.isValid()) {
-        return true;
-    }
-    return false;
+    return ! parent.isValid();
 }
 
 
@@ -150,7 +166,7 @@ Qt::ItemFlags PlaylistItemModel::flags( const QModelIndex &index ) const
 {
     Qt::ItemFlags flags = QAbstractItemModel::flags( index );
     if( index.column() == 3 ) {
-        return flags |= Qt::ItemIsEditable;
+        flags |= Qt::ItemIsEditable;
     }
     return flags;
 }
@@ -160,21 +176,33 @@ bool PlaylistItemModel::setData( const QModelIndex &index,
                                     const QVariant &value,
                                     int role )
 {
+    if( m_playlists == nullptr ) {
+        return false;
+    }
+    bool result = false;
     Q_UNUSED( role )
     if( index.column() == 3 ) {
-        Data::SavedPlaylist *playlist = m_playlists.at( index.row() );
+        Data::SavedPlaylist *playlist = m_playlists->at( index.row() );
         T::get()->playlistManager()->ratePlaylist( playlist->name(),
                     Utils::getRatingFromInt( value.toInt() ));
-        return true;
+        result = true;
     }
-    return false;
+    return result;
 }
 
 
 
-void PlaylistItemModel::clear()
+void PlaylistItemModel::clear( bool deleteList )
 {
-    m_playlists.clear();
+    if( m_playlists != nullptr ) {
+        beginResetModel();
+        if( deleteList ) {
+            m_playlists->clear();
+            delete m_playlists;
+        }
+        m_playlists = 0;
+        endResetModel();
+    }
 }
 
 } }

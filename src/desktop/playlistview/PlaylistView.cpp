@@ -29,6 +29,7 @@
 
 #include <core/T.h>
 #include <uicommon/itemmodels/CommonTrackModel.h>
+#include <uicommon/itemmodels/PlaylistItemModel.h>
 
 #include "../viewcommon/RatingDelegate.h"
 #include "../desktoputils/ChilliUtils.h"
@@ -62,7 +63,8 @@ PlaylistView::PlaylistView( QWidget *parent ) :
 
     m_view = new QTreeView( this );
     m_plProxy = new Playlists::PlaylistProxyModel( this );
-//    m_plProxy->setSourceModel( PL_MANAGER() );
+    m_playlistModel = new Tanyatu::Ui::PlaylistItemModel( this );
+    m_plProxy->setSourceModel( m_playlistModel );
     m_view->setModel( m_plProxy );
     m_view->setItemDelegate( new Views::RatingDelegate( 3, m_view ));
     m_view->setSortingEnabled( true );
@@ -134,6 +136,7 @@ PlaylistView::PlaylistView( QWidget *parent ) :
     setupActions();
     setupConnections();
     onUiStateChanged();
+    onPlaylistManagerChanged();
 }
 
 
@@ -147,7 +150,7 @@ PlaylistView::~PlaylistView()
                                       PL_MANAGER()->trackIdsIn( plName ));
     }
     m_plNumberOfChanges.clear();
-    m_trackView->setContextMenu( 0 );
+    m_trackView->setContextMenu( nullptr );
     delete m_trackContextMenu;
 }
 
@@ -288,6 +291,7 @@ void PlaylistView::onTrackDialogRequested()
         m_contentDialog = new Playlists::AddTrackDialog( this );
         m_contentDialog->setMinimumSize( 400, 400 );
     }
+    m_contentDialog->refreshTracks();
     if( m_contentDialog->exec() == QDialog::Accepted ) {
         QModelIndexList indexList = m_view->selectionModel()->selectedRows();
         if( ! indexList.isEmpty() ) {
@@ -403,6 +407,16 @@ void PlaylistView::onAddTracksToPlayQueue()
 
 
 
+void PlaylistView::onPlaylistManagerChanged()
+{
+    QList< Tanyatu::Data::SavedPlaylist *> *playlists
+            = new QList< Tanyatu::Data::SavedPlaylist *>();
+    PL_MANAGER()->allPlaylists( *playlists );
+    m_playlistModel->setPlaylists( playlists );
+}
+
+
+
 void PlaylistView::onAddPlaylistToQueue( QModelIndex index )
 {
     Q_UNUSED( index );
@@ -461,7 +475,7 @@ void PlaylistView::onPlaylistContentChanged( QString playlistName )
 //                                      PL_MANAGER()->trackIdsIn( playlistName ));
 //        }
 //    }
-//    m_trackView->update();
+    m_trackView->update();
 }
 
 

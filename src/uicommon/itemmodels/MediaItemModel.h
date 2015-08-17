@@ -39,7 +39,8 @@ public:
 
     ~MediaItemModel();
 
-    void setItemList( const QList< Data::MediaItem *> *itemList );
+    void setItemList( const QList< Data::MediaItem *> *itemList,
+                      bool isOwned );
 
     const QList< Data::MediaItem *> * getItemList();
 
@@ -71,6 +72,8 @@ public slots:
     void clear();
 
 private:
+    bool m_listIsOwned;
+
     int m_columnCount;
 
     const QList< Data::MediaItem *> *m_items;
