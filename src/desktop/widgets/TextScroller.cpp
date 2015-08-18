@@ -35,12 +35,14 @@ TextScroller::TextScroller( QColor bgColor,
                             QColor fgColor,
                             QWidget *parent )
     : QWidget( parent )
-    , m_progression( Progression::Forward )
     , m_forceAnimate( false )
     , m_notAnimating( true )
     , m_mouseXPress( -1 )
     , m_pixelFactor( 1.0 )
+    , m_progression( Progression::Forward )
     , m_bgColor( bgColor )
+    , m_startIndex( 0 )
+    , m_imageWidth( 0 )
     , m_fgColor( fgColor )
 
 {

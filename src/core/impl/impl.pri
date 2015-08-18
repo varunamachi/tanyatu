@@ -17,7 +17,7 @@ SOURCES += \
         impl/MMAudioEngine.cpp \
 
 
-# linux-g++ {
+ linux-g++-64 {
     HEADERS += impl/PhononAudioEngine.h
     SOURCES += impl/PhononAudioEngine.cpp
-# }
+ }

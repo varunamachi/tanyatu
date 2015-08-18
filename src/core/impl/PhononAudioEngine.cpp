@@ -19,12 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-
-
-
 #include "PhononAudioEngine.h"
-
-#ifdef Q_OS_LINUX
 
 #include <QCoreApplication>
 #include <QTime>
@@ -267,8 +262,6 @@ Data::MediaItem *PhononAudioEngine::currentItem()
 
 } } //Ending namespaces
 
-
-#endif
 
 
 

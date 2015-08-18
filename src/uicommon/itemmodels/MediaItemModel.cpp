@@ -33,7 +33,7 @@ MediaItemModel::MediaItemModel( int numColumns, QObject *parent ) :
     QAbstractItemModel( parent )
   , m_listIsOwned( false )
   , m_columnCount( numColumns )
-  , m_items( 0 )
+  , m_items( nullptr )
 {
 }
 
@@ -78,7 +78,7 @@ void MediaItemModel::setItemList( const QList< Data::MediaItem *> *itemList,
 
 void MediaItemModel::clear()
 {
-    if( m_items ) {
+    if( m_items != nullptr ) {
         beginResetModel();
         if( m_listIsOwned ) {
             delete m_items;
@@ -100,7 +100,7 @@ void MediaItemModel::setNumColumns( int numColumns )
 int MediaItemModel::rowCount( const QModelIndex &parent ) const
 {
     Q_UNUSED( parent )
-    return m_items ? m_items->size() : 0;
+    return m_items != nullptr ? m_items->size() : 0;
 }
 
 

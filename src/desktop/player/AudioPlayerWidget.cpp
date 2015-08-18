@@ -404,7 +404,7 @@ void AudioPlayerWidget::setVolmeSliderValue( int volume )
 void AudioPlayerWidget::setVolumeLabelText( qint64 value )
 {
     QString num;
-    num.sprintf( "%03d",  value );
+    num.sprintf( "%03ll",  value );
     m_volumeLable->setText( num );
 }
 

@@ -21,9 +21,9 @@ include( viewcommon/viewcommon.pri )
 include( widgets/widgets.pri )
 include( thirdparty/thirdparty.pri )
 
-linux-g++ {
-    LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL
+linux-g++-64 {
     LIBS += -L/usr/lib/x86_64-linux-gnu -lphonon4qt5
+    LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL
 }
 
 RESOURCES += \

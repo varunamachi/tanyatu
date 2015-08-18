@@ -46,13 +46,13 @@
 
 namespace GreenChilli {
 
-static void delay()
-{
-    QTime dieTime= QTime::currentTime().addSecs(1);
-    while( QTime::currentTime() < dieTime )
-    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-    QThread::currentThread()->sleep( 100 );
-}
+//static void delay()
+//{
+//    QTime dieTime= QTime::currentTime().addSecs(1);
+//    while( QTime::currentTime() < dieTime )
+//    QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+//    QThread::currentThread()->sleep( 100 );
+//}
 
 
 
@@ -63,7 +63,7 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
 
     this->setObjectName( "chillimain" );
 
-    QHBoxLayout *topLayout = new QHBoxLayout();
+//    QHBoxLayout *topLayout = new QHBoxLayout();
     m_audioPlayer = new AudioPlayerWidget( this );
 
     m_playlist = new PlaylistWidget( this );
@@ -337,7 +337,7 @@ void ChilliWindow::showEvent( QShowEvent *evt )
 }
 
 
-void ChilliWindow::resizeEvent( QResizeEvent *evt )
+void ChilliWindow::resizeEvent( QResizeEvent */*evt*/ )
 {
 
 }

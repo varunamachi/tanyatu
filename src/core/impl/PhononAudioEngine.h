@@ -25,8 +25,6 @@
 
 #include <QtGlobal>
 
-#ifdef Q_OS_LINUX
-
 #include <QObject>
 #include <phonon4qt5/phonon/MediaObject>
 #include <phonon4qt5/phonon/AudioOutput>
@@ -193,6 +191,3 @@ private:
 }
 
 }
-
-
-#endif

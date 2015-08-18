@@ -226,7 +226,7 @@ void SuperSlider::setMaxValue( qint64 maxValue )
 
 void SuperSlider::setCurrentValue( qint64 curValue )
 {
-    if( curValue <= m_maxVal && m_curentVal != curValue ) {
+    if( curValue <= m_maxVal && m_curentVal != (quint64 ) curValue ) {
         m_curentVal = curValue < 0 ? 0
                                    : ( curValue > m_maxVal ? m_maxVal
                                                            : curValue );
