@@ -60,20 +60,19 @@ const QList< Data::MediaItem *> * MediaItemModel::getItemList()
 void MediaItemModel::setItemList( const QList< Data::MediaItem *> *itemList,
                                   bool ownList )
 {
+    beginResetModel();
     if( m_items != nullptr && m_listIsOwned ) {
-        beginResetModel();
         if( m_items != nullptr ) {
-//            m_items->clear();
             delete m_items;
             m_items = nullptr;
         }
         m_items = itemList;
-        endResetModel();
     }
     else {
         m_items = itemList;
     }
     m_listIsOwned = ownList;
+    endResetModel();
 }
 
 void MediaItemModel::clear()

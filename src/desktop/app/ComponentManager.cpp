@@ -81,7 +81,7 @@ void ComponentManager::setupUi()
     mainLayout->setContentsMargins( QMargins() );
     mainLayout->setSpacing( 0 );
 
-    m_mainWidget->setContentsMargins( 0, 0, 0, 0 );
+    m_mainWidget->setContentsMargins( QMargins() );
     m_buttonLayout->setContentsMargins( 4, 2, 0, 0 );
     m_buttonLayout->setSpacing( 5 );
     this->setLayout( mainLayout );
@@ -124,6 +124,7 @@ void ComponentManager::addComponent( GreenChilli::ChilliComponent *component )
         connect( button, SIGNAL( activated( int )),
                  this, SLOT( onIndexSelected( int )));
         m_mainWidget->addWidget( component );
+        component->setContentsMargins( QMargins() );
         emit componentAdded( component );
         if( m_components.size() == 1 ) {
             button->setChecked( true );

@@ -71,6 +71,8 @@ private:
 
     bool m_roundedRect;
 
+    QSizeGrip *m_sizeGrip;
+
     friend class ChilliWindow;
 
 };
@@ -108,7 +110,6 @@ private:
 
     ChilliMainWidget *m_chilliWidget;
 
-    QSizeGrip *m_sizeGrip;
 
     bool m_moving;
 
@@ -121,6 +122,7 @@ private:
     QHBoxLayout *m_layout;
 
     QWidget *m_containerWidget;
+
 };
 
 

@@ -68,8 +68,8 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
 
     m_playlist = new PlaylistWidget( this );
     m_audioPlayer->setContentsMargins( QMargins( 2, 2, 2, 2 ));
-    m_playlist->setContentsMargins( QMargins( 2, 2, 2, 2 ));
-    ComponentManager::get()->setContentsMargins( QMargins( 2, 2, 2, 2 ));
+    m_playlist->setContentsMargins( QMargins( 2, 2, 2, 0 ));
+    ComponentManager::get()->setContentsMargins( QMargins( 2, 2, 2, 0 ));
 
     QHBoxLayout *bottomLyt = new QHBoxLayout();
     bottomLyt->addWidget( m_playlist );
@@ -83,8 +83,13 @@ ChilliMainWidget::ChilliMainWidget( QWidget *parent )
     layout->setContentsMargins( QMargins() );
     layout->setSpacing( 0 );
 
-    this->setLayout( layout );
 
+    m_sizeGrip = new QSizeGrip( this );
+    m_sizeGrip->setContentsMargins( QMargins() );
+    layout->addWidget( m_sizeGrip, 0, Qt::AlignBottom | Qt::AlignRight );
+
+    this->setLayout( layout );
+//    m_si new QSizeGrip( this );
 
     QString css = createStyleSheet();
     ComponentManager::get()->setStyleSheet( css );
@@ -244,14 +249,14 @@ ChilliWindow::ChilliWindow( QWidget *parent )
     m_containerWidget->setContentsMargins( 5, 5, 5, 5 );
 
 
-    m_chilliWidget->setContentsMargins( 5, 5, 5, 5 );
+    m_chilliWidget->setContentsMargins( 5, 5, 0, 0 );
     m_layout = new QHBoxLayout( m_containerWidget );
     m_layout->addWidget( m_chilliWidget );
     m_containerWidget->setAttribute( Qt::WA_TranslucentBackground, true );
     this->setAttribute( Qt::WA_TranslucentBackground, true );
     this->setCentralWidget( m_containerWidget );
-    m_layout->setSpacing( 5 );
-    m_layout->setContentsMargins( 5, 5, 5, 5 );
+    m_layout->setSpacing( 0 );
+    m_layout->setContentsMargins( 5, 5, 0, 0 );
 
     CustomShadowEffect *effect = new CustomShadowEffect( this );
     effect->setBlurRadius( 10.0 );
@@ -266,6 +271,7 @@ ChilliWindow::ChilliWindow( QWidget *parent )
              SIGNAL( minimize() ),
              this,
              SLOT( onMinimize() ));
+    this->setContentsMargins( QMargins() );
 }
 
 
@@ -360,8 +366,8 @@ void ChilliWindow::maximize()
 void ChilliWindow::restore()
 {
     if( ! m_geometry.isEmpty() ) {
-        m_layout->setSpacing( 5 );
-        m_layout->setContentsMargins( 5, 5, 5, 5 );
+        m_layout->setSpacing( 0 );
+        m_layout->setContentsMargins( 5, 5, 0, 0 );
         m_containerWidget->setContentsMargins( 5, 5, 5, 5 );
         m_chilliWidget->setRoundedRect( true );
         this->restoreGeometry( m_geometry );
