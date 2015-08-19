@@ -34,10 +34,11 @@
 #include <core/datasource/StdDataSourceManager.h>
 #include <core/datasource/StdDataUpdater.h>
 #include <core/coreutils/FileSystemUtil.h>
-#include <core/impl/PhononAudioEngine.h>
 #include <uicommon/uiutils/ChilliCache.h>
 #include <uicommon/itemmodels/CommonTrackModel.h>
-
+#ifndef Q_OS_WIN
+    #include <core/impl/PhononAudioEngine.h>
+#endif
 
 #include "app/ChilliWindow.h"
 #include "app/ComponentManager.h"
@@ -144,23 +145,24 @@ void initUiComponents( QMainWindow *win )
 int main(int argc, char *argv[])
 {
     try {
-    QApplication a(argc, argv);
-    QCoreApplication::instance()->setApplicationName( "GreenChilli" );
-    a.setApplicationName( QObject::tr( "GreenChilli" ));
+        QApplication a(argc, argv);
+        QCoreApplication::instance()->setApplicationName( "GreenChilli" );
+        a.setApplicationName( QObject::tr( "GreenChilli" ));
 
-    CHILLI_CACHE()->insertPixmap( "star_empty", ":/images/norating" );
-    CHILLI_CACHE()->insertPixmap(  "star_filled", ":/images/hot" );
-    initCoreComponents( 0 );
-    GreenChilli::ChilliWindow win;
-    win.setWindowTitle( "GreenChilli" );
-    win.setWindowIcon( QIcon( ":/images/greenchilli" ));
-    initUiComponents( &win );
-    win.show();
-//    GreenChilli::PlayerControlWidget win;
-//    win.show();
-    return a.exec();
+        CHILLI_CACHE()->insertPixmap( "star_empty", ":/images/norating" );
+        CHILLI_CACHE()->insertPixmap(  "star_filled", ":/images/hot" );
+        initCoreComponents( 0 );
+        GreenChilli::ChilliWindow win;
+        win.setWindowTitle( "GreenChilli" );
+        win.setWindowIcon( QIcon( ":/images/greenchilli" ));
+        initUiComponents( &win );
+        win.show();
+        //    GreenChilli::PlayerControlWidget win;
+        //    win.show();
+        return a.exec();
     } catch( ... ) {
-        qDebug() << "Oh oho";
+        qDebug() << "Caught an exception";
     }
+    return -1;
 }
 
