@@ -77,7 +77,7 @@ private:
 #define UNK( n ) TOKENPASTE2( n, __LINE__ )
 
 #define AT_SCOPE_EXIT( x ) \
-    Tanyatu::ScopedOperation UNK( tnt_scpop )( 0, [ & ]() { x; })
+    Tanyatu::ScopedOperation UNK( tnt_scpop )( nullptr, [ & ]() { x; })
 
 #define SCOPE_LIMIT( x, y ) \
     Tanyatu::ScopedOperation UNK( tnt_scpop )( [ & ]() { x; },  \

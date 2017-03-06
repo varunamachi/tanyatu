@@ -25,6 +25,7 @@ TEMPLATE = subdirs
 SUBDIRS += core
 SUBDIRS += uicommon
 SUBDIRS += desktop
+uicommon.depends = core
 desktop.depends = core uicommon
 
 QMAKE_CXXFLAGS += -frtt
