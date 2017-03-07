@@ -33,7 +33,7 @@ win32-g++* {
 }
 linux-g++ {
     LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL
-    LIBS += -L/usr/lib/x86_64-linux-gnu -lphonon4qt5
+    #LIBS += -L/usr/lib/x86_64-linux-gnu -lphonon4qt5
 }
 
 HEADERS += \
