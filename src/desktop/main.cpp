@@ -55,10 +55,9 @@ void initCoreComponents( QObject *parent )
 {
     Tanyatu::FileSystemUtil::initTanyatuFS();
 
-#ifdef Q_OS_WIN
     Tanyatu::IEngine *engine =
             new Tanyatu::Impl::MMAudioEngine( parent );
-#else
+#if 0
     Tanyatu::IEngine *engine =
             new Tanyatu::Impl::PhononAudioEngine( parent );
 #endif

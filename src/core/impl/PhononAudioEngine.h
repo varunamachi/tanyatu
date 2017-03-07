@@ -22,7 +22,7 @@
 
 
 #pragma once
-
+#if 0
 #include <QtGlobal>
 
 #include <QObject>
@@ -191,3 +191,4 @@ private:
 }
 
 }
+#endif
