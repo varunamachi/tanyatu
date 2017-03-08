@@ -20,20 +20,20 @@ CONFIG(debug, debug|release) {
     TAGLIB_NAME = tagd
 }
 
+INCLUDEPATH += $$PWD/../../lib/taglib/include
 win32-msvc* {
     MSVC_VER = $$(VisualStudioVersion)
     equals(MSVC_VER, 12.0){
-        INCLUDEPATH += $$PWD/../../lib/taglib/include
         LIBS        += -L$$PWD/../../lib/taglib/lib/msvc12_x86 -l$${TAGLIB_NAME}
     }
 }
 win32-g++* {
-    INCLUDEPATH += $$PWD/../../lib/taglib/include
     LIBS        += -L$$PWD/../../lib/taglib/lib/mingw_x86 -l$${TAGLIB_NAME}
 }
 linux-g++ {
-    LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL
     #LIBS += -L/usr/lib/x86_64-linux-gnu -lphonon4qt5
+    LIBS += -L/usr/lib/x86_64-linux-gnu/mesa -lGL
+    LIBS        += -L$$PWD/../../lib/taglib/lib/linux_gcc64/ -l$${TAGLIB_NAME}
 }
 
 HEADERS += \
